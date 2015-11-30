@@ -11,6 +11,13 @@ instance variables
 	private semaphore: Semaphore := <Green>;
 	private train: [Train] := nil;
 	
+	private northBlock: [SimpleBlock] := nil;
+	private southBlock: [SimpleBlock] := nil;
+	
+	-- Invariants:
+	-- northBlock and southBlock cannot be both nil:
+	-- inv not (northBlock = nil and southBlock = nil);
+
 operations
 
 	-- constructor
@@ -22,7 +29,7 @@ operations
 		train := initialTrain;
 		return self
 	);
-
+	
 functions
 
 traces

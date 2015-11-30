@@ -5,6 +5,8 @@ values
 
 instance variables
 	private blocks: seq of Block := [ ];
+	private trains: seq of Train := [ ];
+	
 	
 operations
 	

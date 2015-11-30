@@ -1,11 +1,26 @@
 class Train
 types
-
+	public Orientation = <North> | <South>;
 values
 
 instance variables
-
+	private orientation: Orientation := <North>;
+	
 operations
+
+	-- constructor
+	public Train: Orientation ==> Train
+	Train(initialOrientation) ==
+	(
+		orientation := initialOrientation;
+		return self
+	);
+	
+	-- moves the train 1 unit according to his position and orientation
+	public move: () ==> ()
+	move() ==
+	is not yet specified;
+	
 
 functions
 
