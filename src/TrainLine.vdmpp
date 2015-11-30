@@ -1,0 +1,23 @@
+class TrainLine
+types
+
+values
+
+instance variables
+	private blocks: seq of Block := [ ];
+	
+operations
+	
+	-- TrainLine constructor
+	public TrainLine: (seq of Block) ==> TrainLine
+	TrainLine(initialBlocks) ==
+	(
+		blocks := initialBlocks;
+		return self
+	);
+
+functions
+
+traces
+
+end TrainLine

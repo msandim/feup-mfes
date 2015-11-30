@@ -13,6 +13,16 @@ instance variables
 	
 operations
 
+	-- constructor
+	public SimpleBlock: Station * Semaphore * Train ==> SimpleBlock
+	SimpleBlock(initialStation, initialSemaphore, initialTrain) ==
+	(
+		station := initialStation;
+		semaphore := initialSemaphore;
+		train := initialTrain;
+		return self
+	);
+
 functions
 
 traces
