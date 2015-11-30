@@ -1,0 +1,15 @@
+class TrainLine
+types
+
+values
+
+instance variables
+	private blocks: seq of Block := [ ];
+	
+operations
+
+functions
+
+traces
+
+end TrainLine

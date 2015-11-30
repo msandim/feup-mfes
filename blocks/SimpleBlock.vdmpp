@@ -1,0 +1,20 @@
+class SimpleBlock is subclass of Block
+
+types
+	public Semaphore = <Red> | <Yellow> | <Green> | <Unavailable>;
+	public Sensor = <Free> | <Busy> | <Unavailable>;
+
+values
+
+instance variables
+	private station: [Station] := nil;
+	private semaphore: Semaphore := <Green>;
+	private train: [Train] := nil;
+	
+operations
+
+functions
+
+traces
+
+end SimpleBlock

@@ -1,0 +1,15 @@
+class Station
+types
+	public String = seq of char;
+values
+
+instance variables
+	private id: String := "";
+
+operations
+
+functions
+
+traces
+
+end Station
