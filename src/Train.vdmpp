@@ -1,10 +1,10 @@
 class Train
 types
-	public Orientation = <North> | <South>;
+	public Orientation = <Up> | <Down>;
 values
 
 instance variables
-	private orientation: Orientation := <North>;
+	private orientation: Orientation := <Up>;
 	
 operations
 
@@ -15,11 +15,6 @@ operations
 		orientation := initialOrientation;
 		return self
 	);
-	
-	-- moves the train 1 unit according to his position and orientation
-	public move: () ==> ()
-	move() ==
-	is not yet specified;
 	
 
 functions
