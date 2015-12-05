@@ -5,7 +5,7 @@ values
 
 instance variables
 	private upBlock: Block;
-	private downBlock: Block := new Block(); 
+	private downBlock: Block; 
 	
 operations
 	public StationModule: (TrainLine) ==> StationModule

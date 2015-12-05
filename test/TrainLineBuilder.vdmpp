@@ -25,10 +25,10 @@ operations
 		trainLine.addStationModule("station4");
 		trainLine.addSimpleModule("module8");
 		
-		trainLine.addTrain("train1", "station1");
-		trainLine.addTrain("train2", "station2");
-		trainLine.addTrain("train3", "station3");
-		trainLine.addTrain("train4", "station4");
+		trainLine.addTrain("train1", <Up>, "station1");
+		trainLine.addTrain("train2", <Up>, "station2");
+		trainLine.addTrain("train3", <Up>, "station3");
+		trainLine.addTrain("train4", <Up>, "station4");
 	
 		return trainLine;
 	);

@@ -33,6 +33,17 @@ operations
 		else
 			return downModule.getBlock(orientation);
 	);
+	
+	public setUpModule: (Module) ==> ()
+	setUpModule(upModuleArg) ==
+	(
+			upModule := upModuleArg;
+	);
+	public setDownModule: (Module) ==> ()
+	setDownModule(downModuleArg) ==
+	(
+			downModule := downModuleArg;
+	);
 
 functions
 

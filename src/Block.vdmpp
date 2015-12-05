@@ -15,17 +15,17 @@ instance variables
 		-- Invariants:
 	-- Sensor must be unavailable or mark if a train is in the block
 	inv (sensor = <Free> and
-			not exists t in set trainLine.getTrains() & t.getCurrentBlock() = true_self)
+			not exists t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
 		or (sensor = <Busy> and
-			exists1 t in set trainLine.getTrains() & t.getCurrentBlock() = true_self)
+			exists1 t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
 		or sensor = <Unavailable>;
 	
 	-- Semaphore must be unavailable or mark if a train is in the block
-	inv ((semaphore = <Green> or semaphore = <Yellow>) and
-			not exists t in set trainLine.getTrains() & t.getCurrentBlock() = true_self)
+	/*inv ((semaphore = <Green> or semaphore = <Yellow>) and
+			not exists t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
 		or (semaphore = <Red> and
-			exists1 t in set trainLine.getTrains() & t.getCurrentBlock() = true_self)
-		or semaphore = <Unavailable>;
+			exists1 t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
+		or semaphore = <Unavailable>;*/
 	
 operations
 

@@ -6,27 +6,16 @@ operations
 	testCase1() ==
 	(
 		dcl trainLine: TrainLine := TrainLineBuilder`build();
+		trainLine.moveTrain("train1");
 		
-		
-	
-	
 		return;
 	);
 
-	/*public testCase1() ==> ()
-	testCase1() == 
-	(
-		
-		
-		dcl train1: Train := new Train(<Up>);
-		
-		
-	);
-   
   public testAll: () ==> ()
   testAll() ==
   (
-  	
-  );*/
+  	IO`print("ola");
+  	testCase1();
+  );
   
 end TestTrainLine

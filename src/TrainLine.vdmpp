@@ -4,9 +4,10 @@ types
 values
 
 instance variables
-	private modules: [seq of Module] := [ ];
-	private trains: [set of Train] := { };
-	
+	private modules: map String to Module := {|->};
+	private trains: map String to Train := {|->};
+	private headId: String;
+	private tailId: String;
 	
 operations
 	
@@ -14,30 +15,57 @@ operations
 	public TrainLine: () ==> TrainLine
 	TrainLine() ==
 	(		
+		headId := "initialModule";
+		tailId := headId;
+		modules := modules munion { headId |-> new StationModule(self) };
 		return self
 	);
 	
 	-- Move a train
-	public move: Train ==> bool
+	/**public move: Train ==> bool
 	move(train) ==
 	is not yet specified
 	pre train in set trains
-	post train in set trains;
+	post train in set trains;*/
 	
-	public addTrain: (String) * (String) ==> ()
-	addTrain(id, moduleId) ==
-	is not yet specified;
+	public addTrain: (String) * (Train`Orientation) * (String) ==> ()
+	addTrain(id, orientation, moduleId) ==
+	(
+		trains := trains munion {id |-> new Train(orientation, modules(moduleId).getBlock(orientation)) };
+	);
 	
+	private addModule: (String) * (Module) ==> ()
+	addModule(id, module) ==
+	(
+		dcl headModule: Module := modules(headId);
+		dcl tailModule: Module := modules(tailId);
+		
+		module.setUpModule(headModule);
+		module.setDownModule(tailModule);
+		tailModule := module;
+		
+		modules := modules munion { id |-> module };
+	);
 	public addSimpleModule: (String) ==> ()
 	addSimpleModule(id) ==
-	is not yet specified;
-	
+	(
+		addModule(id, new SimpleModule(self));
+	);
 	public addStationModule: (String) ==> ()
 	addStationModule(id) ==
-	is not yet specified;
+	(
+		addModule(id, new StationModule(self));
+	);
+	
+	public moveTrain: (String) ==> ()
+	moveTrain(id) ==
+	(
+		dcl train: Train := trains(id);
+		train.move();
+	);
 	
 	-- Gets
-	pure public getTrains: () ==> (set of Train)
+	pure public getTrains: () ==> (map String to Train)
 	getTrains() == 
 	(
 		return trains;
