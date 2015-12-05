@@ -1,0 +1,80 @@
+class Block
+
+types
+	public Semaphore = <Red> | <Yellow> | <Green> | <Unavailable>;
+	public Sensor = <Free> | <Busy> | <Unavailable>;
+
+instance variables
+	private module : Module;
+	protected trainLine: TrainLine;
+	
+	private sensor: Sensor := <Free>;
+	private semaphore: Semaphore := <Green>;
+	private true_self: Block;
+	
+		-- Invariants:
+	-- Sensor must be unavailable or mark if a train is in the block
+	inv (sensor = <Free> and
+			not exists t in set trainLine.getTrains() & t.getCurrentBlock() = true_self)
+		or (sensor = <Busy> and
+			exists1 t in set trainLine.getTrains() & t.getCurrentBlock() = true_self)
+		or sensor = <Unavailable>;
+	
+	-- Semaphore must be unavailable or mark if a train is in the block
+	inv ((semaphore = <Green> or semaphore = <Yellow>) and
+			not exists t in set trainLine.getTrains() & t.getCurrentBlock() = true_self)
+		or (semaphore = <Red> and
+			exists1 t in set trainLine.getTrains() & t.getCurrentBlock() = true_self)
+		or semaphore = <Unavailable>;
+	
+operations
+
+	-- Constructor
+	public Block: (Module) * (TrainLine) ==> Block
+	Block(moduleArg, trainLineArg) ==
+	(
+		module := moduleArg;
+		trainLine := trainLineArg;
+		true_self := self;
+		
+		return self
+	);
+	
+	-- Methods
+	pure public canEnter: () ==> (bool)
+	canEnter() ==
+	(
+		return semaphore <> <Red>;
+	);
+		pure public canEnterNextBlock: (Train`Orientation) ==> (bool)
+	canEnterNextBlock(orientation) ==
+	(
+		return getNextBlock(orientation).canEnter();
+	);
+	
+	-- Gets
+	pure public getSemaphore: () ==> (Semaphore)
+	getSemaphore() == 
+	(
+		return semaphore;
+	);
+	
+	pure public getNextBlock: (Train`Orientation) ==> (Block)
+	getNextBlock(orientation) == 
+	(
+		return module.getNextBlock(orientation);
+	);
+	
+	-- Sets
+	public setTrainLine: (TrainLine) ==> ()
+	setTrainLine(initialTrainLine) ==
+	(
+		trainLine := initialTrainLine;
+	);
+	public setSemaphore: (Semaphore) ==> ()
+	setSemaphore(semaphoreArg) ==
+	(
+		semaphore := semaphoreArg;
+	);
+
+end Block

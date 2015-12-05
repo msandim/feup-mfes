@@ -1,27 +1,47 @@
 class TrainLine
 types
-
+	public String = seq of char; 
 values
 
 instance variables
-	private blocks: seq of Block := [ ];
-	private trains: set of Train := { };
+	private modules: [seq of Module] := [ ];
+	private trains: [set of Train] := { };
 	
 	
 operations
 	
 	-- TrainLine constructor
-	public TrainLine: (seq of Block) ==> TrainLine
-	TrainLine(initialBlocks) ==
-	(
-		blocks := initialBlocks;
+	public TrainLine: () ==> TrainLine
+	TrainLine() ==
+	(		
 		return self
 	);
 	
 	-- Move a train
 	public move: Train ==> bool
 	move(train) ==
+	is not yet specified
+	pre train in set trains
+	post train in set trains;
+	
+	public addTrain: (String) * (String) ==> ()
+	addTrain(id, moduleId) ==
 	is not yet specified;
+	
+	public addSimpleModule: (String) ==> ()
+	addSimpleModule(id) ==
+	is not yet specified;
+	
+	public addStationModule: (String) ==> ()
+	addStationModule(id) ==
+	is not yet specified;
+	
+	-- Gets
+	pure public getTrains: () ==> (set of Train)
+	getTrains() == 
+	(
+		return trains;
+	);
 
 functions
 

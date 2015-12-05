@@ -1,0 +1,33 @@
+class SimpleModule is subclass of Module
+types
+
+values
+
+instance variables
+	private block : Block;
+
+operations
+	public SimpleModule: (TrainLine) ==> SimpleModule
+	SimpleModule(trainLineArg) ==
+	(
+		block := new Block(self, trainLineArg);
+		return self
+	);
+	
+	pure public canEnter: (Train`Orientation) ==> (bool)
+	canEnter(orientation) ==
+	(
+		return block.canEnter();
+	);
+	
+	pure public getBlock: (Train`Orientation) ==> (Block)
+	getBlock(orientation) ==
+	(	
+		return block;
+	);
+
+functions
+
+traces
+
+end SimpleModule

@@ -1,0 +1,43 @@
+class StationModule is subclass of Module
+types
+
+values
+
+instance variables
+	private upBlock: Block;
+	private downBlock: Block := new Block(); 
+	
+operations
+	public StationModule: (TrainLine) ==> StationModule
+	StationModule(trainLineArg) ==
+	(
+		upBlock := new Block(self, trainLineArg);
+		downBlock := new Block(self, trainLineArg);
+		return self
+	);
+	
+	pure public canEnter: (Train`Orientation) ==> (bool)
+	canEnter(orientation) ==
+	(
+		if orientation = <Up>
+		then
+			return upBlock.canEnter()
+		else
+			return downBlock.canEnter()
+	);
+	
+	pure public getBlock: (Train`Orientation) ==> (Block)
+	getBlock(orientation) ==
+	(	
+		if orientation = <Up>
+		then
+			return upBlock
+		else
+			return downBlock;
+	);
+
+functions
+
+traces
+
+end StationModule

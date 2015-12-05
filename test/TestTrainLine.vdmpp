@@ -2,7 +2,18 @@ class TestTrainLine is subclass of TestCase
 
 operations  
 
-	public testCase1() ==> ()
+	public testCase1: () ==> ()
+	testCase1() ==
+	(
+		dcl trainLine: TrainLine := TrainLineBuilder`build();
+		
+		
+	
+	
+		return;
+	);
+
+	/*public testCase1() ==> ()
 	testCase1() == 
 	(
 		
@@ -16,6 +27,6 @@ operations
   testAll() ==
   (
   	
-  );
+  );*/
   
 end TestTrainLine

@@ -1,0 +1,41 @@
+class TrainLineBuilder
+types
+
+values
+
+instance variables
+
+operations
+
+	pure public static build: () ==> TrainLine
+	build() == 
+	(
+		dcl trainLine: TrainLine := new TrainLine(); 
+	
+		trainLine.addSimpleModule("module1");
+		trainLine.addStationModule("station1");
+		trainLine.addSimpleModule("module2");
+		trainLine.addSimpleModule("module3");
+		trainLine.addStationModule("station2");
+		trainLine.addSimpleModule("module4");
+		trainLine.addSimpleModule("module5");
+		trainLine.addStationModule("station3");
+		trainLine.addSimpleModule("module6");
+		trainLine.addSimpleModule("module7");
+		trainLine.addStationModule("station4");
+		trainLine.addSimpleModule("module8");
+		
+		trainLine.addTrain("train1", "station1");
+		trainLine.addTrain("train2", "station2");
+		trainLine.addTrain("train3", "station3");
+		trainLine.addTrain("train4", "station4");
+	
+		return trainLine;
+	);
+
+functions
+
+traces
+
+
+end TrainLineBuilder

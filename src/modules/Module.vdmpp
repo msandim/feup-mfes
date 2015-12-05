@@ -1,0 +1,41 @@
+class Module
+types
+
+values
+
+instance variables
+	protected upModule: Module;
+	protected downModule: Module;
+
+operations
+
+	public Module: (Module) * (Module) ==> Module
+	Module(upModuleArg, downModuleArg) ==
+	(
+		upModule := upModuleArg;
+		downModule := downModuleArg;
+	);
+
+	pure public canEnter: (Train`Orientation) ==> (bool)
+	canEnter(orientation) ==
+	is subclass responsibility;
+
+	pure public getBlock: (Train`Orientation) ==> (Block)
+	getBlock(orientation) ==
+	is subclass responsibility;
+	
+	pure public getNextBlock: (Train`Orientation) ==> (Block)
+	getNextBlock(orientation) ==
+	(
+		if orientation = <Up>
+		then
+			return upModule.getBlock(orientation)
+		else
+			return downModule.getBlock(orientation);
+	);
+
+functions
+
+traces
+
+end Module
