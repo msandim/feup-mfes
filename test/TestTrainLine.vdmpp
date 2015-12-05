@@ -1,0 +1,21 @@
+class TestTrainLine is subclass of TestCase
+
+operations  
+
+	public testCase1() ==> ()
+	testCase1() == 
+	(
+		
+		
+		dcl train1: Train := new Train(<Up>);
+		
+		
+	);
+   
+  public testAll: () ==> ()
+  testAll() ==
+  (
+  	
+  );
+  
+end TestTrainLine

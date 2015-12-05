@@ -7,24 +7,23 @@ types
 values
 
 instance variables
-	private station: [Station] := nil;
+	private sensor: Sensor := <Free>;
 	private semaphore: Semaphore := <Green>;
 	private train: [Train] := nil;
 	
-	private northBlock: [SimpleBlock] := nil;
-	private southBlock: [SimpleBlock] := nil;
-	
 	-- Invariants:
-	-- northBlock and southBlock cannot be both nil:
-	-- inv not (northBlock = nil and southBlock = nil);
+	-- Sensor must be unavailable or mark if a train is in the block
+	inv (sensor = <Free> and train = nil) or (sensor = <Busy> and train <> nil) or sensor = <Unavailable>;
+	
+	-- Semaphore must be unavailable or mark if a train is in the block´
+	inv ((semaphore = <Green> or semaphore = <Yellow>) and train = nil) or (semaphore = <Red> and train <> nil) or semaphore = <Unavailable>;
 
 operations
 
-	-- constructor
-	public SimpleBlock: Station * Semaphore * Train ==> SimpleBlock
-	SimpleBlock(initialStation, initialSemaphore, initialTrain) ==
+	-- Constructor
+	public SimpleBlock: Semaphore * Train ==> SimpleBlock
+	SimpleBlock(initialSemaphore, initialTrain) ==
 	(
-		station := initialStation;
 		semaphore := initialSemaphore;
 		train := initialTrain;
 		return self

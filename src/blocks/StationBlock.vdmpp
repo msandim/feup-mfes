@@ -1,9 +1,10 @@
 class StationBlock is subclass of Block
 types
-
+	public String = seq of char;
 values
 
 instance variables
+	private id: String := "";
 	private block1: SimpleBlock;
 	private block2: SimpleBlock;
 	

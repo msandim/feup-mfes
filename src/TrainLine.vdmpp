@@ -5,7 +5,7 @@ values
 
 instance variables
 	private blocks: seq of Block := [ ];
-	private trains: seq of Train := [ ];
+	private trains: set of Train := { };
 	
 	
 operations
@@ -17,6 +17,11 @@ operations
 		blocks := initialBlocks;
 		return self
 	);
+	
+	-- Move a train
+	public move: Train ==> bool
+	move(train) ==
+	is not yet specified;
 
 functions
 
