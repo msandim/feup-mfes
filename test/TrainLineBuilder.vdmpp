@@ -24,11 +24,16 @@ operations
 		trainLine.addSimpleModule("module7");
 		trainLine.addStationModule("station4");
 		trainLine.addSimpleModule("module8");
+		trainLine.closeCircularTrack();
 		
 		trainLine.addTrain("train1", <Up>, "station1");
+		IO`print("adicionei1");
 		trainLine.addTrain("train2", <Up>, "station2");
+				IO`print("adicionei2");
 		trainLine.addTrain("train3", <Up>, "station3");
+				IO`print("adicionei3");
 		trainLine.addTrain("train4", <Up>, "station4");
+				IO`print("adicionei4");
 	
 		return trainLine;
 	);

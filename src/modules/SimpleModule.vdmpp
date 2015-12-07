@@ -4,7 +4,7 @@ types
 values
 
 instance variables
-	private block : Block;
+	private block: Block;
 
 operations
 	public SimpleModule: (TrainLine) ==> SimpleModule
@@ -14,13 +14,13 @@ operations
 		return self
 	);
 	
-	pure public canEnter: (Train`Orientation) ==> (bool)
+	public pure canEnter: (Train`Orientation) ==> (bool)
 	canEnter(orientation) ==
 	(
 		return block.canEnter();
 	);
 	
-	pure public getBlock: (Train`Orientation) ==> (Block)
+	public pure getBlock: (Train`Orientation) ==> (Block)
 	getBlock(orientation) ==
 	(	
 		return block;

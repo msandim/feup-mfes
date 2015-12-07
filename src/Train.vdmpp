@@ -22,26 +22,26 @@ operations
 	public move: () ==> ()
 	move() ==
 	(
-				-- Get next block to move to:
-			dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
+		-- Get next block to move to:
+		dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
 			
-			-- The old block we're on should now be yellow:
-			currentBlock.setSemaphore(<Yellow>);
+		-- The old block we're on should now be yellow:
+		currentBlock.setSemaphore(<Yellow>);
 	
-			-- The new block we're on should now be red:
-			nextBlock.setSemaphore(<Red>);
+		-- The new block we're on should now be red:
+		nextBlock.setSemaphore(<Red>);
 			
-			-- Move to the next block:	
-			currentBlock := nextBlock;
+		-- Move to the next block:	
+		currentBlock := nextBlock;
 	)
 	pre currentBlock.getNextBlock(orientation).canEnter()
 	post currentBlock = currentBlock~.getNextBlock(orientation) and -- New block is equals to old block 
-		not currentBlock.canEnter() and -- We cannot enter in the new block (New block is red)
-		currentBlock~.getSemaphore() = <Yellow>; -- Old block is yellow
+		not currentBlock.canEnter(); -- and -- We cannot enter in the new block (New block is red)
+	  --currentBlock~.getSemaphore() = <Yellow>; -- Old block is yellow
 		
 	-- Gets
-	pure public getCurrentBlock: () ==> Block
-	getCurrentBlock() ==
+	pure public getBlock: () ==> Block
+	getBlock() ==
 	(
 		return currentBlock;
 	);

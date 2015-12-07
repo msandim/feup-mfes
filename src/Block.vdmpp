@@ -14,11 +14,11 @@ instance variables
 	
 		-- Invariants:
 	-- Sensor must be unavailable or mark if a train is in the block
-	inv (sensor = <Free> and
-			not exists t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
-		or (sensor = <Busy> and
-			exists1 t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
-		or sensor = <Unavailable>;
+	--inv (sensor = <Free> and
+			--not exists t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
+		--or (sensor = <Busy> and
+			--exists1 t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
+		--or sensor = <Unavailable>;
 	
 	-- Semaphore must be unavailable or mark if a train is in the block
 	/*inv ((semaphore = <Green> or semaphore = <Yellow>) and
@@ -46,7 +46,8 @@ operations
 	(
 		return semaphore <> <Red>;
 	);
-		pure public canEnterNextBlock: (Train`Orientation) ==> (bool)
+	
+	pure public canEnterNextBlock: (Train`Orientation) ==> (bool)
 	canEnterNextBlock(orientation) ==
 	(
 		return getNextBlock(orientation).canEnter();
@@ -57,6 +58,12 @@ operations
 	getSemaphore() == 
 	(
 		return semaphore;
+	);
+	
+	pure public getModule: () ==> (Module)
+	getModule() ==
+	(
+		return module;
 	);
 	
 	pure public getNextBlock: (Train`Orientation) ==> (Block)
@@ -71,6 +78,7 @@ operations
 	(
 		trainLine := initialTrainLine;
 	);
+	
 	public setSemaphore: (Semaphore) ==> ()
 	setSemaphore(semaphoreArg) ==
 	(

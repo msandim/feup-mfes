@@ -9,22 +9,22 @@ instance variables
 
 operations
 
-	public Module: (Module) * (Module) ==> Module
+	/*public Module: (Module) * (Module) ==> Module
 	Module(upModuleArg, downModuleArg) ==
 	(
 		upModule := upModuleArg;
 		downModule := downModuleArg;
-	);
+	);*/
 
-	pure public canEnter: (Train`Orientation) ==> (bool)
+	public pure canEnter: (Train`Orientation) ==> (bool)
 	canEnter(orientation) ==
 	is subclass responsibility;
 
-	pure public getBlock: (Train`Orientation) ==> (Block)
+	public pure getBlock: (Train`Orientation) ==> (Block)
 	getBlock(orientation) ==
 	is subclass responsibility;
 	
-	pure public getNextBlock: (Train`Orientation) ==> (Block)
+	public pure getNextBlock: (Train`Orientation) ==> (Block)
 	getNextBlock(orientation) ==
 	(
 		if orientation = <Up>
@@ -34,16 +34,17 @@ operations
 			return downModule.getBlock(orientation);
 	);
 	
+	public pure getUpModule: () ==> Module
+	getUpModule() == return upModule;
+	
+	public pure getDownModule: () ==> Module
+	getDownModule() == return downModule;
+	
 	public setUpModule: (Module) ==> ()
-	setUpModule(upModuleArg) ==
-	(
-			upModule := upModuleArg;
-	);
+	setUpModule(upModuleArg) == upModule := upModuleArg;
+	
 	public setDownModule: (Module) ==> ()
-	setDownModule(downModuleArg) ==
-	(
-			downModule := downModuleArg;
-	);
+	setDownModule(downModuleArg) == downModule := downModuleArg;
 
 functions
 

@@ -11,12 +11,14 @@ operations
 	public StationModule: (TrainLine) ==> StationModule
 	StationModule(trainLineArg) ==
 	(
+		-- Instantiate the blocks of this StationModule:
 		upBlock := new Block(self, trainLineArg);
 		downBlock := new Block(self, trainLineArg);
+		
 		return self
 	);
 	
-	pure public canEnter: (Train`Orientation) ==> (bool)
+	public pure canEnter: (Train`Orientation) ==> (bool)
 	canEnter(orientation) ==
 	(
 		if orientation = <Up>
@@ -26,7 +28,7 @@ operations
 			return downBlock.canEnter()
 	);
 	
-	pure public getBlock: (Train`Orientation) ==> (Block)
+	public pure getBlock: (Train`Orientation) ==> (Block)
 	getBlock(orientation) ==
 	(	
 		if orientation = <Up>
