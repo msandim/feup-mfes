@@ -2,19 +2,24 @@ class TestTrainLine is subclass of TestCase
 
 operations  
 
-	public testCase1: () ==> ()
-	testCase1() ==
+	public testSimpleMovement: () ==> ()
+	testSimpleMovement() ==
 	(
-		dcl trainLine: TrainLine := TrainLineBuilder`build();
-		trainLine.moveTrain("train1");
+		dcl trainLine: TrainLine := TrainLineBuilder`buildMap1();
+		trainLine.moveTrain(1);
 		
-		return;
+		-- Test the position of the new train and check the semaphores:
+		assertEqual(trainLine.getTrain(1).getBlock(), trainLine.getModule(4).getBlock(<Up>));
+		assertEqual(<Yellow>, trainLine.getModule(3).getBlock(<Up>).getSemaphore());
+		assertEqual(<Yellow>, trainLine.getTrain(1).getBlock().getModule().getDownModule().getBlock(<Up>).getSemaphore());
+		
+		IO`println("Passed simple movement test");
 	);
 
   public testAll: () ==> ()
   testAll() ==
   (
-  	testCase1();
+  	testSimpleMovement();
   );
   
 end TestTrainLine

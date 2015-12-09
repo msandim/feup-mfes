@@ -1,10 +1,13 @@
 class Train
 types
+	public String = seq of char;
 	public Orientation = <Up> | <Down>;
 	public MovementStatus = <Stopped> | <Moving>;
 values
 
 instance variables
+	private id: String;
+	
 	private orientation: Orientation := <Up>;
 	private status: MovementStatus := <Stopped>; -- tou a considerar que só se mete comboios nas stations
 	private currentBlock: Block;
@@ -12,9 +15,10 @@ instance variables
 operations
 
 	-- Constructor
-	public Train: (Orientation) * (Block) ==> Train
-	Train(initialOrientation, initialBlock) ==
+	public Train: (String) * (Orientation) * (Block) ==> Train
+	Train(idArg, initialOrientation, initialBlock) ==
 	(
+		id := idArg;
 		orientation := initialOrientation;
 		currentBlock := initialBlock;
 		return self
@@ -59,10 +63,10 @@ operations
 	
 	-- Gets
 	pure public getBlock: () ==> Block
-	getBlock() ==
-	(
-		return currentBlock;
-	);
+	getBlock() == return currentBlock;
+	
+	pure public getId: () ==> String
+	getId() == return id;
 
 functions
 

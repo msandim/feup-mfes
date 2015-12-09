@@ -7,9 +7,10 @@ instance variables
 	private block: Block;
 
 operations
-	public SimpleModule: (TrainLine) ==> SimpleModule
-	SimpleModule(trainLineArg) ==
+	public SimpleModule: (String) * (TrainLine) ==> SimpleModule
+	SimpleModule(idArg, trainLineArg) ==
 	(
+		id := idArg;
 		block := new Block(self, trainLineArg);
 		isStation := false;
 		return self

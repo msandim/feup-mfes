@@ -4,11 +4,13 @@ types
 values
 
 instance variables
-	private modules: map String to Module := {|->};
-	private trains: map String to Train := {|->};
+	private modules: seq of Module := [];
+	private trains: seq of Train := [];
 	
-	private headModuleId: String := "";
-	private tailModuleId: String := "";
+	private headModule: [Module] := nil;
+	private tailModule: [Module] := nil;
+	
+	-- Colocar invariante de headModule e tailModule serem ambos nulos antes de se adicionar modulos
 	
 operations
 	
@@ -24,63 +26,61 @@ operations
 	public addSimpleModule: (String) ==> ()
 	addSimpleModule(id) ==
 	(
-		dcl simpleModule: Module := new SimpleModule(self);
-		addModule(id, simpleModule);
+		dcl simpleModule: Module := new SimpleModule(id, self);
+		addModule(simpleModule);
 	);
 	
 	-- Adds a station module to the line:
 	public addStationModule: (String) ==> ()
 	addStationModule(id) ==
 	(
-		dcl stationModule: Module := new StationModule(self);
-		addModule(id, stationModule);
+		dcl stationModule: Module := new StationModule(id, self);
+		return addModule(stationModule);
 	);
 	
 	-- Closes the circular track:
   public closeCircularTrack: () ==> ()
 	closeCircularTrack() ==
 	(
-		modules(headModuleId).setDownModule(modules(tailModuleId));
-		modules(tailModuleId).setUpModule(modules(headModuleId));
+		headModule.setDownModule(tailModule);
+		tailModule.setUpModule(headModule);
 	)
-	pre card(dom modules) >= 2 -- To close a circular track we have to have at least two modules in the track
-	post modules(headModuleId).getDownModule() = modules(tailModuleId) and -- the first module must be linked to the last model
-		modules(tailModuleId).getUpModule() = modules(headModuleId); -- The last module must be linked to the first model
+	pre len modules >= 2 -- To close a circular track we have to have at least two modules in the track
+	post headModule.getDownModule() = tailModule and -- the first module must be linked to the last model
+		tailModule.getUpModule() = headModule; -- The last module must be linked to the first model
 	
 	-- Adds a train to the train line:
-	public addTrain: (String) * (Train`Orientation) * (String) ==> ()
+	public addTrain: (String) * (Train`Orientation) * nat1 ==> ()
 	addTrain(id, orientation, moduleId) ==
 	(
-		trains := trains munion {id |-> new Train(orientation, modules(moduleId).getBlock(orientation)) };
-	)
+		trains := trains ^ [new Train(id, orientation, modules(moduleId).getBlock(orientation))];
+	);
+	/**
 	pre moduleId in set dom modules and -- The module we want the train on must be valid
 		not exists t1 in set rng trains & t1.getBlock().getModule() = modules(moduleId) and -- The module must not have any train on
 		id not in set dom trains -- An id with this train must not exist
 	post id in set dom trains and -- The id was added to the modules
 		exists1 t1 in set rng trains & t1.getBlock().getModule() = modules(moduleId); -- The train is now in this module
-		
+		*/
 	
 	-- Moves a train with a specific id
-	public moveTrain: (String) ==> ()
+	public moveTrain: (nat1) ==> ()
 	moveTrain(id) ==
 	(
 		trains(id).move();
-	)
-	pre id in set dom trains;
+	);
 	
 	-- *****************************************************************
 	-- ****************** Private Auxiliar Methods *********************
 	-- *****************************************************************
 	
 	-- Adds a module to the station
-	private addModule: (String) * (Module) ==> ()
-	addModule(newModuleId, newModule) ==
+	private addModule: (Module) ==> ()
+	addModule(newModule) ==
 	(
-		if card(dom modules) > 0 -- if we already have a module added
+		if len modules > 0 -- if we already have a module added
 		then
-		(
-			dcl tailModule: Module := modules(tailModuleId);
-			
+		(			
 			IO`println("Tenho mais do que um modulo e vou inserir mais um");
 			
 			-- Connect the new model to the last model insered:
@@ -88,27 +88,34 @@ operations
 			newModule.setDownModule(tailModule);
 			
 			-- Update the last model inserted:
-			tailModuleId := newModuleId;
+			tailModule := newModule;
+			
+			IO`println("acabei a atribuicao");
 		)
 		else
 		(
 			IO`println("Novo modulo e n tinha nenhum");
-			headModuleId := newModuleId;
-			tailModuleId := newModuleId;
+			headModule := newModule;
+			tailModule := newModule;
 		);
 		
-		modules := modules munion { newModuleId |-> newModule };
+		IO`println("vou fazer a union");
+		modules := modules ^ [newModule];
+		IO`println("acabei a union");
 		
-		IO`print("novo size"); IO`print(card dom modules);
+		IO`print("novo size:"); IO`println(len modules);		
+	);
+	--pre newModule not in set modules -- the id we're adding is completely new
+	--post newModule in set modules and -- The id was added to the modules
+	  --if card modules~ = 0
+	  	--then (headModule = newModule and tailModule = newModule)
+	    --else (tailModule = newModule);
 		
-	)
-	pre newModuleId not in set dom modules -- the id we're adding is completely new
-	post newModuleId in set (dom modules) and -- The id was added to the modules
-		modules(newModuleId) = newModule and -- The instance in the map is the one we supplied
-	  if card(dom modules~) = 0
-	  	then (headModuleId = newModuleId and tailModuleId = newModuleId)
-	    else (modules(tailModuleId) = newModule);
-		
+	public pure getTrain: nat1 ==> Train
+	getTrain(id) == return trains(id);
+	
+	public pure getModule: nat1 ==> Module
+	getModule(id) == return modules(id);
 	
 	-- Gets
 	/*

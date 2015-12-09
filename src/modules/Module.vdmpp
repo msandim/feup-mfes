@@ -1,9 +1,12 @@
 class Module
 types
-
+	public String = seq of char; 
+		
 values
 
 instance variables
+	protected id: String;
+
 	protected upModule: Module;
 	protected downModule: Module;
 	protected isStation: bool;
@@ -34,6 +37,9 @@ operations
 		else
 			return downModule.getBlock(orientation);
 	);
+	
+	public pure getId: () ==> String
+	getId() == return id;
 	
 	public pure getIsStation: () ==> bool
 	getIsStation() == return isStation;

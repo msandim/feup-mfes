@@ -8,10 +8,11 @@ instance variables
 	private downBlock: Block; 
 	
 operations
-	public StationModule: (TrainLine) ==> StationModule
-	StationModule(trainLineArg) ==
+	public StationModule: (String) * (TrainLine) ==> StationModule
+	StationModule(idArg, trainLineArg) ==
 	(
 		-- Instantiate the blocks of this StationModule:
+		id := idArg;
 		upBlock := new Block(self, trainLineArg);
 		downBlock := new Block(self, trainLineArg);
 		isStation := true;
