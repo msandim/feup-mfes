@@ -53,6 +53,12 @@ operations
 		return getNextBlock(orientation).canEnter();
 	);
 	
+	pure public isInStation: () ==> (bool)
+	isInStation() ==
+	(
+		return module.getIsStation();
+	);
+	
 	-- Gets
 	pure public getSemaphore: () ==> (Semaphore)
 	getSemaphore() == 

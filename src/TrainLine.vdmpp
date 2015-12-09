@@ -60,7 +60,6 @@ operations
 		exists1 t1 in set rng trains & t1.getBlock().getModule() = modules(moduleId); -- The train is now in this module
 		
 	
-	
 	-- Moves a train with a specific id
 	public moveTrain: (String) ==> ()
 	moveTrain(id) ==

@@ -6,6 +6,7 @@ values
 instance variables
 	protected upModule: Module;
 	protected downModule: Module;
+	protected isStation: bool;
 
 operations
 
@@ -33,6 +34,9 @@ operations
 		else
 			return downModule.getBlock(orientation);
 	);
+	
+	public pure getIsStation: () ==> bool
+	getIsStation() == return isStation;
 	
 	public pure getUpModule: () ==> Module
 	getUpModule() == return upModule;

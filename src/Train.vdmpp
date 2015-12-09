@@ -1,10 +1,12 @@
 class Train
 types
 	public Orientation = <Up> | <Down>;
+	public MovementStatus = <Stopped> | <Moving>;
 values
 
 instance variables
 	private orientation: Orientation := <Up>;
+	private status: MovementStatus := <Stopped>; -- tou a considerar que só se mete comboios nas stations
 	private currentBlock: Block;
 	
 operations
@@ -33,12 +35,28 @@ operations
 			
 		-- Move to the next block:	
 		currentBlock := nextBlock;
+		
+		-- If we move into a station, we stop. Otherwise, we're moving:
+		if currentBlock.isInStation()
+		then
+			status := <Stopped>
+		else
+			status := <Moving>;
 	)
 	pre currentBlock.getNextBlock(orientation).canEnter()
 	post currentBlock = currentBlock~.getNextBlock(orientation) and -- New block is equals to old block 
 		not currentBlock.canEnter(); -- and -- We cannot enter in the new block (New block is red)
 	  --currentBlock~.getSemaphore() = <Yellow>; -- Old block is yellow
 		
+	public pressButton: () ==> ()
+	pressButton() ==
+	(
+		-- See if we can exit
+		-- If we can exit, move the signals and change the status
+		IO`println("Pressed the button")
+	)
+	pre status = <Stopped> and currentBlock.isInStation();
+	
 	-- Gets
 	pure public getBlock: () ==> Block
 	getBlock() ==

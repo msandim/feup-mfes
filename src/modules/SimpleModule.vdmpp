@@ -11,6 +11,7 @@ operations
 	SimpleModule(trainLineArg) ==
 	(
 		block := new Block(self, trainLineArg);
+		isStation := false;
 		return self
 	);
 	

@@ -14,7 +14,7 @@ operations
 		-- Instantiate the blocks of this StationModule:
 		upBlock := new Block(self, trainLineArg);
 		downBlock := new Block(self, trainLineArg);
-		
+		isStation := true;
 		return self
 	);
 	
