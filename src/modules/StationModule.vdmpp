@@ -8,14 +8,14 @@ instance variables
 	private downBlock: Block; 
 	
 operations
-	public StationModule: (String) * (TrainLine) ==> StationModule
+	public StationModule: (TrainLine`String) * (TrainLine) ==> StationModule
 	StationModule(idArg, trainLineArg) ==
 	(
 		-- Instantiate the blocks of this StationModule:
 		id := idArg;
+		isStation := true;
 		upBlock := new Block(self, trainLineArg);
 		downBlock := new Block(self, trainLineArg);
-		isStation := true;
 		return self
 	);
 	
@@ -24,9 +24,9 @@ operations
 	(
 		if orientation = <Up>
 		then
-			return upBlock.canEnter()
+			return upBlock.canEnter(orientation)
 		else
-			return downBlock.canEnter()
+			return downBlock.canEnter(orientation)
 	);
 	
 	public pure getBlock: (Train`Orientation) ==> (Block)

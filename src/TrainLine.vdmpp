@@ -4,13 +4,19 @@ types
 values
 
 instance variables
-	private modules: seq of Module := [];
-	private trains: seq of Train := [];
+	private modules: map String to Module := {|->};
+	private trains: map String to Train := {|->};
 	
-	private headModule: [Module] := nil;
-	private tailModule: [Module] := nil;
+	private headModuleId: [String] := nil;
+	private tailModuleId: [String] := nil;
 	
 	-- Colocar invariante de headModule e tailModule serem ambos nulos antes de se adicionar modulos
+	inv (headModuleId = nil and tailModuleId = nil) => card dom modules = 0;
+	
+	-- Colocar invariantes de ter de haver simple modules entre stations
+	
+	-- Colocar invariante de os ids serem unicos
+	
 	
 operations
 	
@@ -27,7 +33,7 @@ operations
 	addSimpleModule(id) ==
 	(
 		dcl simpleModule: Module := new SimpleModule(id, self);
-		addModule(simpleModule);
+		addModule(id, simpleModule);
 	);
 	
 	-- Adds a station module to the line:
@@ -35,26 +41,52 @@ operations
 	addStationModule(id) ==
 	(
 		dcl stationModule: Module := new StationModule(id, self);
-		return addModule(stationModule);
+		addModule(id, stationModule);
 	);
 	
 	-- Closes the circular track:
   public closeCircularTrack: () ==> ()
 	closeCircularTrack() ==
 	(
-		headModule.setDownModule(tailModule);
-		tailModule.setUpModule(headModule);
+		-- Close the circular track:
+		modules(headModuleId).setDownModule(modules(tailModuleId));
+		modules(tailModuleId).setUpModule(modules(headModuleId));
+		
+		-- The semaphores of simple modules in the station must be red or yellow
+		for all id in set dom modules do
+		(
+			dcl module: Module := modules(id);
+			
+			if module.getIsStation() then
+			(
+				module.getDownModule().getBlock(<Down>).setSemaphore(<Red>, <Down>);
+				module.getDownModule().getBlock(<Down>).setSemaphore(<Yellow>, <Up>);
+				
+				module.getUpModule().getBlock(<Up>).setSemaphore(<Red>, <Up>);
+				module.getUpModule().getBlock(<Up>).setSemaphore(<Yellow>, <Down>);
+			); -- FALTA POS-CONDICAO!
+			
+		);
 	)
-	pre len modules >= 2 -- To close a circular track we have to have at least two modules in the track
-	post headModule.getDownModule() = tailModule and -- the first module must be linked to the last model
-		tailModule.getUpModule() = headModule; -- The last module must be linked to the first model
+	pre card dom modules >= 2 -- To close a circular track we have to have at least two modules in the track
+	post modules(headModuleId).getDownModule() = modules(tailModuleId) and -- the first module must be linked to the last model
+		modules(tailModuleId).getUpModule() = modules(headModuleId); -- The last module must be linked to the first model
 	
 	-- Adds a train to the train line:
-	public addTrain: (String) * (Train`Orientation) * nat1 ==> ()
+	public addTrain: (String) * (Train`Orientation) * (String) ==> ()
 	addTrain(id, orientation, moduleId) ==
 	(
-		trains := trains ^ [new Train(id, orientation, modules(moduleId).getBlock(orientation))];
-	);
+		trains := trains ++ {id |-> new Train(orientation, modules(moduleId).getBlock(orientation))};
+		modules(moduleId).getBlock(orientation).trainEnter(orientation);
+	)
+	post id in set dom trains and
+		trains(id).getCurrentBlock().getSemaphore(orientation) = <Red> and trains(id).getCurrentBlock().getSensor() = <Busy>;
+	--pre id not in set dom trains and -- Id of this train must be unique
+		--not exists t in set rng trains & t.getCurrentBlock().getModule() = modules(moduleId);
+	--post card trains = card trains~ + 1 and -- Increment one in the trains sequence
+		--exists1 t in set trains & t.getCurrentBlock().getModule() = modules(moduleId); -- One train now is in the block
+		
+		
 	/**
 	pre moduleId in set dom modules and -- The module we want the train on must be valid
 		not exists t1 in set rng trains & t1.getBlock().getModule() = modules(moduleId) and -- The module must not have any train on
@@ -64,66 +96,62 @@ operations
 		*/
 	
 	-- Moves a train with a specific id
-	public moveTrain: (nat1) ==> ()
-	moveTrain(id) ==
-	(
-		trains(id).move();
-	);
+	public moveTrain: (String) ==> ()
+	moveTrain(id) == trains(id).move();
+	
+	-- Requests a specific train to leave a station
+	public requestLeaveStation: (String) ==> bool
+	requestLeaveStation(id) == trains(id).requestLeaveStation();
 	
 	-- *****************************************************************
 	-- ****************** Private Auxiliar Methods *********************
 	-- *****************************************************************
 	
 	-- Adds a module to the station
-	private addModule: (Module) ==> ()
-	addModule(newModule) ==
+	private addModule: (String) * (Module) ==> ()
+	addModule(newModuleId, newModule) ==
 	(
-		if len modules > 0 -- if we already have a module added
+		if card dom modules > 0 -- if we already have a module added
 		then
-		(			
-			IO`println("Tenho mais do que um modulo e vou inserir mais um");
+		(
+			dcl tailModule: Module := modules(tailModuleId);			
 			
 			-- Connect the new model to the last model insered:
 			tailModule.setUpModule(newModule);
 			newModule.setDownModule(tailModule);
 			
 			-- Update the last model inserted:
-			tailModule := newModule;
+			tailModuleId := newModuleId;
 			
-			IO`println("acabei a atribuicao");
 		)
 		else
 		(
-			IO`println("Novo modulo e n tinha nenhum");
-			headModule := newModule;
-			tailModule := newModule;
+			atomic
+			(
+				headModuleId := newModuleId;
+				tailModuleId := newModuleId;
+			);
 		);
 		
-		IO`println("vou fazer a union");
-		modules := modules ^ [newModule];
-		IO`println("acabei a union");
+		modules := modules munion { newModuleId |-> newModule };
+	)
+	post newModuleId in set dom modules and -- The id was added to the modules
+	  if card dom modules~ = 0
+	  	then (headModuleId = newModuleId and tailModuleId = newModuleId)
+	    else (tailModuleId = newModuleId and modules(tailModuleId~).getUpModule() = newModule and newModule.getDownModule() = modules(tailModuleId~));
 		
-		IO`print("novo size:"); IO`println(len modules);		
-	);
-	--pre newModule not in set modules -- the id we're adding is completely new
-	--post newModule in set modules and -- The id was added to the modules
-	  --if card modules~ = 0
-	  	--then (headModule = newModule and tailModule = newModule)
-	    --else (tailModule = newModule);
-		
-	public pure getTrain: nat1 ==> Train
+	public pure getTrain: String ==> Train
 	getTrain(id) == return trains(id);
 	
-	public pure getModule: nat1 ==> Module
+	public pure getModule: String ==> Module
 	getModule(id) == return modules(id);
 	
 	-- Gets
-	/*
 	pure public getTrains: () ==> (map String to Train)
 	getTrains() == 
 	(
 		return trains;
-	); */
+	);
 
 functions
 

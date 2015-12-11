@@ -7,19 +7,19 @@ instance variables
 	private block: Block;
 
 operations
-	public SimpleModule: (String) * (TrainLine) ==> SimpleModule
+	public SimpleModule: (TrainLine`String) * (TrainLine) ==> SimpleModule
 	SimpleModule(idArg, trainLineArg) ==
 	(
 		id := idArg;
-		block := new Block(self, trainLineArg);
 		isStation := false;
+		block := new Block(self, trainLineArg);
 		return self
 	);
 	
 	public pure canEnter: (Train`Orientation) ==> (bool)
 	canEnter(orientation) ==
 	(
-		return block.canEnter();
+		return block.canEnter(orientation);
 	);
 	
 	public pure getBlock: (Train`Orientation) ==> (Block)

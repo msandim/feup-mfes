@@ -1,12 +1,11 @@
 class Train
 types
-	public String = seq of char;
 	public Orientation = <Up> | <Down>;
 	public MovementStatus = <Stopped> | <Moving>;
 values
 
 instance variables
-	private id: String;
+	private id: TrainLine`String;
 	
 	private orientation: Orientation := <Up>;
 	private status: MovementStatus := <Stopped>; -- tou a considerar que só se mete comboios nas stations
@@ -15,10 +14,9 @@ instance variables
 operations
 
 	-- Constructor
-	public Train: (String) * (Orientation) * (Block) ==> Train
-	Train(idArg, initialOrientation, initialBlock) ==
+	public Train: (Orientation) * (Block) ==> Train
+	Train(initialOrientation, initialBlock) ==
 	(
-		id := idArg;
 		orientation := initialOrientation;
 		currentBlock := initialBlock;
 		return self
@@ -30,12 +28,12 @@ operations
 	(
 		-- Get next block to move to:
 		dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
-			
-		-- The old block we're on should now be yellow:
-		currentBlock.setSemaphore(<Yellow>);
+		
+		-- Make exit operations on the block we were on:
+		currentBlock.trainExit(orientation);
 	
-		-- The new block we're on should now be red:
-		nextBlock.setSemaphore(<Red>);
+		-- Make enter operations on the block we're going on:
+		currentBlock.trainEnter(orientation);
 			
 		-- Move to the next block:	
 		currentBlock := nextBlock;
@@ -47,26 +45,68 @@ operations
 		else
 			status := <Moving>;
 	)
-	pre currentBlock.getNextBlock(orientation).canEnter()
-	post currentBlock = currentBlock~.getNextBlock(orientation) and -- New block is equals to old block 
-		not currentBlock.canEnter(); -- and -- We cannot enter in the new block (New block is red)
+	pre currentBlock.getNextBlock(orientation).canEnter(orientation)
+	post currentBlock = currentBlock~.getNextBlock(orientation); -- New block is equals to old block 
+		-- not currentBlock.canEnter(orientation); -- and -- We cannot enter in the new block (New block is red)
 	  --currentBlock~.getSemaphore() = <Yellow>; -- Old block is yellow
 		
-	public pressButton: () ==> ()
-	pressButton() ==
+	public requestLeaveStation: () ==> bool
+	requestLeaveStation() ==
 	(
-		-- See if we can exit
-		-- If we can exit, move the signals and change the status
-		IO`println("Pressed the button")
+		-- See if we can exit ==> the set of blocks until the next station must be cleared:
+		
+		if isPathClearedUntilNextStation()
+		then
+		(
+			-- Set the semaphores in the opposite direction until the nextStation to <Red>
+			--dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
+			--while not nextBlock.getModule().getIsStation() do
+			--(
+			--	nextBlock.setSemaphore(<Red>, getOppositeOrientation());
+			--	nextBlock := nextBlock.getNextBlock(orientation);
+			--);
+			
+			currentBlock.getNextBlock(orientation).setSemaphore(<Green>, orientation);
+
+			return true; -- a seguir fazer o move
+		)
+		else
+			return false;
 	)
 	pre status = <Stopped> and currentBlock.isInStation();
 	
 	-- Gets
-	pure public getBlock: () ==> Block
-	getBlock() == return currentBlock;
+	pure public getCurrentBlock: () ==> Block
+	getCurrentBlock() == return currentBlock;
 	
-	pure public getId: () ==> String
+	pure public getOrientation: () ==> Orientation
+	getOrientation() == return orientation;
+	
+	pure public getId: () ==> TrainLine`String
 	getId() == return id;
+	
+	-- Private methods:
+	private isPathClearedUntilNextStation: () ==> bool
+	isPathClearedUntilNextStation() ==
+	(
+		dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
+		
+		-- Iterate the next blocks and check if we can make it to the next station without being stuck somewhere in between:
+		while (not nextBlock.getModule().getIsStation()) and nextBlock.getSensor() = <Free> do
+			nextBlock := nextBlock.getNextBlock(orientation);
+		
+		-- If we got to the next station in the previous cycle, then the path is clear, but we have to check if it's busy
+		return (nextBlock.getModule().getIsStation() and nextBlock.getSensor() = <Free>);
+	)
+	pre status = <Stopped> and currentBlock.isInStation(); -- We can only execute this function when we're stopped in a station
+	
+	private getOppositeOrientation: () ==> (Orientation)
+	getOppositeOrientation() == 
+	(
+		if orientation = <Up>
+		then return <Down>
+		else return <Up>;
+	);
 
 functions
 

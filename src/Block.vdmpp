@@ -3,22 +3,25 @@ class Block
 types
 	public Semaphore = <Red> | <Yellow> | <Green> | <Unavailable>;
 	public Sensor = <Free> | <Busy> | <Unavailable>;
-
+		
 instance variables
 	private module : Module;
-	protected trainLine: TrainLine;
+	private trainLine: TrainLine;
 	
 	private sensor: Sensor := <Free>;
-	private semaphore: Semaphore := <Green>;
+	private upSemaphore: Semaphore := <Green>;
+	private downSemaphore: Semaphore := <Green>;
 	private true_self: Block;
 	
-		-- Invariants:
+	-- Invariants:
+	--inv (sensor = <Free> and upSemaphore <> <Red> and downSemaphore <> <Red>) or (sensor = <Busy> and 
+	
 	-- Sensor must be unavailable or mark if a train is in the block
-	--inv (sensor = <Free> and
-			--not exists t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
-		--or (sensor = <Busy> and
-			--exists1 t in set (rng trainLine.getTrains()) & t.getCurrentBlock() = true_self)
-		--or sensor = <Unavailable>;
+	/** inv (sensor = <Free> and
+			not exists t in set rng trainLine.getTrains() & t.getCurrentBlock() = true_self)
+		or (sensor = <Busy> and
+			exists1 t in set rng trainLine.getTrains() & t.getCurrentBlock() = true_self)
+		or sensor = <Unavailable>; */
 	
 	-- Semaphore must be unavailable or mark if a train is in the block
 	/*inv ((semaphore = <Green> or semaphore = <Yellow>) and
@@ -37,20 +40,69 @@ operations
 		trainLine := trainLineArg;
 		true_self := self;
 		
+		-- If its in a station, lets put the semaphores red
+		if isInStation()
+		then
+		(
+			upSemaphore := <Red>;
+			downSemaphore := <Red>;
+		);
+		
 		return self
 	);
 	
-	-- Methods
-	pure public canEnter: () ==> (bool)
-	canEnter() ==
+	public trainEnter: (Train`Orientation) ==> ()
+	trainEnter(trainOrientation) ==
 	(
-		return semaphore <> <Red>;
+		if trainOrientation = <Up>
+		then atomic
+		(
+			upSemaphore := <Red>;
+			sensor := <Busy>;
+		)
+		else atomic
+		(
+			downSemaphore := <Red>;
+			sensor := <Busy>;
+		);	
+	);
+	
+	public trainExit: (Train`Orientation) ==> ()
+	trainExit(trainOrientation) ==
+	(
+		dcl previousBlock: Block := getPreviousBlock(trainOrientation);
+	
+		if trainOrientation = <Up>
+		then atomic
+		(
+			upSemaphore := <Yellow>;
+			sensor := <Free>;
+		)
+		else atomic
+		(
+			downSemaphore := <Yellow>;
+			sensor := <Free>;
+		);
+		
+		-- TODO falta meter para nos coisos antes das estações n ser verde
+		previousBlock.setSemaphore(<Green>, trainOrientation);
+	);
+	
+	-- Methods
+	pure public canEnter: (Train`Orientation) ==> (bool)
+	canEnter(orientationArg) ==
+	(
+		if orientationArg = <Up>
+		then
+			return upSemaphore <> <Red>
+		else
+			return downSemaphore <> <Red>;
 	);
 	
 	pure public canEnterNextBlock: (Train`Orientation) ==> (bool)
 	canEnterNextBlock(orientation) ==
 	(
-		return getNextBlock(orientation).canEnter();
+		return getNextBlock(orientation).canEnter(orientation);
 	);
 	
 	pure public isInStation: () ==> (bool)
@@ -60,11 +112,18 @@ operations
 	);
 	
 	-- Gets
-	pure public getSemaphore: () ==> (Semaphore)
-	getSemaphore() == 
+	pure public getSemaphore: (Train`Orientation) ==> (Semaphore)
+	getSemaphore(orientationArg) == 
 	(
-		return semaphore;
+		if orientationArg = <Up>
+		then
+			return upSemaphore
+		else
+			return downSemaphore;
 	);
+	
+	pure public getSensor: () ==> (Sensor)
+	getSensor() == return sensor;
 	
 	pure public getModule: () ==> (Module)
 	getModule() ==
@@ -78,6 +137,12 @@ operations
 		return module.getNextBlock(orientation);
 	);
 	
+	pure public getPreviousBlock: (Train`Orientation) ==> (Block)
+	getPreviousBlock(orientation) == 
+	(
+		return module.getPreviousBlock(orientation);
+	);
+	
 	-- Sets
 	public setTrainLine: (TrainLine) ==> ()
 	setTrainLine(initialTrainLine) ==
@@ -85,10 +150,14 @@ operations
 		trainLine := initialTrainLine;
 	);
 	
-	public setSemaphore: (Semaphore) ==> ()
-	setSemaphore(semaphoreArg) ==
-	(
-		semaphore := semaphoreArg;
+	public setSemaphore: (Semaphore) * (Train`Orientation) ==> ()
+	setSemaphore(semaphoreArg, orientationArg) ==
+	(	
+		if orientationArg = <Up>
+		then
+			upSemaphore := semaphoreArg
+		else
+			downSemaphore := semaphoreArg;
 	);
 
 end Block

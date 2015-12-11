@@ -26,9 +26,9 @@ operations
 		trainLine.addSimpleModule("module8");
 		trainLine.closeCircularTrack();
 		
-		IO`println("Vou add train");
-		trainLine.addTrain("train1", <Up>, 3);
-		IO`println("Added train");
+		trainLine.addTrain("train1", <Up>, "station1");
+		trainLine.addTrain("train2", <Up>, "station3");
+		trainLine.addTrain("train3", <Up>, "station4");
 		
 		return trainLine;
 	);
