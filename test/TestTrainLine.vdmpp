@@ -9,7 +9,7 @@ operations
 		dcl orientation: Train`Orientation := line.getTrain("train1").getOrientation();
 		
 		-- Test if the train is in the station, with a red light before the station and after the station
-		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("station1").getBlock(train1Orientation));
+		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("station1").getBlock(orientation));
 		assertEqual(true, line.getTrain("train1").getIsStopped()); -- Test if we are stopped
 		assertEqual(<Red>, line.getBlockSemaphore("station1", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
