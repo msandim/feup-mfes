@@ -26,17 +26,14 @@ operations
 	public move: () ==> ()
 	move() ==
 	(
-		-- Get next block to move to:
-		dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
-		
 		-- Make exit operations on the block we were on:
 		currentBlock.trainExit(orientation);
 	
 		-- Make enter operations on the block we're going on:
-		currentBlock.trainEnter(orientation);
+		currentBlock.getNextBlock(orientation).trainEnter(orientation);
 			
 		-- Move to the next block:	
-		currentBlock := nextBlock;
+		currentBlock := currentBlock.getNextBlock(orientation);
 		
 		-- If we move into a station, we stop. Otherwise, we're moving:
 		if currentBlock.isInStation()
@@ -79,8 +76,17 @@ operations
 	pure public getCurrentBlock: () ==> Block
 	getCurrentBlock() == return currentBlock;
 	
+	pure public getNextBlock: () ==> Block
+	getNextBlock() == return currentBlock.getNextBlock(orientation);
+	
+	pure public getPreviousBlock: () ==> Block
+	getPreviousBlock() == return currentBlock.getPreviousBlock(orientation);
+	
 	pure public getOrientation: () ==> Orientation
 	getOrientation() == return orientation;
+	
+	pure public getIsStopped: () ==> bool
+	getIsStopped() == return status = <Stopped>;
 	
 	pure public getId: () ==> TrainLine`String
 	getId() == return id;

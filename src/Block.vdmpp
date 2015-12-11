@@ -70,22 +70,39 @@ operations
 	public trainExit: (Train`Orientation) ==> ()
 	trainExit(trainOrientation) ==
 	(
-		dcl previousBlock: Block := getPreviousBlock(trainOrientation);
+		-- Update the block we're leaving
+		dcl semaphoreNextState: Semaphore;
+		dcl previousSemaphoreNextState: Semaphore;
+		
+		-- If this is a module after a station, it must be red at all time, otherwise yellow
+		if getModule().getPreviousModule(trainOrientation).getIsStation()
+		then
+			semaphoreNextState := <Red>
+		else
+			semaphoreNextState := <Yellow>;
 	
 		if trainOrientation = <Up>
 		then atomic
 		(
-			upSemaphore := <Yellow>;
+			upSemaphore := semaphoreNextState
 			sensor := <Free>;
 		)
 		else atomic
 		(
-			downSemaphore := <Yellow>;
+			downSemaphore := semaphoreNextState
 			sensor := <Free>;
 		);
 		
-		-- TODO falta meter para nos coisos antes das estações n ser verde
-		previousBlock.setSemaphore(<Green>, trainOrientation);
+		-- Check the previous block to the block we're leaving:
+		-- If the previous block from the block we're leaving is a station, leave it yellow
+		if (getModule().getPreviousModule(trainOrientation).getIsStation()) then
+			previousSemaphoreNextState := <Yellow>
+		elseif (getModule().getPreviousModule(trainOrientation).getPreviousModule(trainOrientation).getIsStation()) then -- If the previous-previous block is a station, then it must be red
+			previousSemaphoreNextState := <Red>
+		else
+			previousSemaphoreNextState := <Green>;
+			
+		getModule().getPreviousModule(trainOrientation).getBlock(trainOrientation).setSemaphore(previousSemaphoreNextState, trainOrientation);
 	);
 	
 	-- Methods

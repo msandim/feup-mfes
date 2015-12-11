@@ -15,6 +15,7 @@ operations
 		trainLine.addSimpleModule("module1");
 		trainLine.addStationModule("station1");
 		trainLine.addSimpleModule("module2");
+		trainLine.addSimpleModule("module2.5");
 		trainLine.addSimpleModule("module3");
 		trainLine.addStationModule("station2");
 		trainLine.addSimpleModule("module4");
@@ -27,8 +28,30 @@ operations
 		trainLine.closeCircularTrack();
 		
 		trainLine.addTrain("train1", <Up>, "station1");
-		trainLine.addTrain("train2", <Up>, "station3");
-		trainLine.addTrain("train3", <Up>, "station4");
+		
+		return trainLine;
+	);
+	
+	public static buildMap2: () ==> TrainLine
+	buildMap2() == 
+	(
+		dcl trainLine: TrainLine := new TrainLine(); 
+	
+		trainLine.addSimpleModule("module1");
+		trainLine.addStationModule("station1");
+		trainLine.addSimpleModule("module2");
+		trainLine.addSimpleModule("module3");
+		trainLine.addStationModule("station2");
+		trainLine.addSimpleModule("module4");
+		trainLine.addSimpleModule("module5");
+		trainLine.addStationModule("station3");
+		trainLine.addSimpleModule("module6");
+		trainLine.addSimpleModule("module7");
+		trainLine.addStationModule("station4");
+		trainLine.addSimpleModule("module8");
+		trainLine.closeCircularTrack();
+		
+		trainLine.addTrain("train1", <Up>, "station1");
 		
 		return trainLine;
 	);

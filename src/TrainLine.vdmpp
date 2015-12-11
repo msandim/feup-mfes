@@ -13,9 +13,11 @@ instance variables
 	-- Colocar invariante de headModule e tailModule serem ambos nulos antes de se adicionar modulos
 	inv (headModuleId = nil and tailModuleId = nil) => card dom modules = 0;
 	
-	-- Colocar invariantes de ter de haver simple modules entre stations
+	-- There arent any trains in the same block
+	inv not exists t1, t2 in set dom trains & (t1 <> t2 and trains(t1).getCurrentBlock() = trains(t2).getCurrentBlock());
 	
-	-- Colocar invariante de os ids serem unicos
+	-- Colocar invariantes de ter de haver simple modules entre stations
+	--inv forall m1, m2 in set dom modules & (card dom modules >); 
 	
 	
 operations
@@ -145,6 +147,12 @@ operations
 	
 	public pure getModule: String ==> Module
 	getModule(id) == return modules(id);
+	
+	public pure getBlockSemaphore: String * Train`Orientation ==> Block`Semaphore
+	getBlockSemaphore(idArg, orientationArg) ==
+	(
+		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg);
+	);
 	
 	-- Gets
 	pure public getTrains: () ==> (map String to Train)

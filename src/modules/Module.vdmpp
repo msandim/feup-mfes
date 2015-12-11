@@ -58,6 +58,22 @@ operations
 	public pure getDownModule: () ==> Module
 	getDownModule() == return downModule;
 	
+	pure public getNextModule: (Train`Orientation) ==> (Module)
+	getNextModule(orientation) ==
+	(
+		if orientation = <Up>
+		then return upModule
+		else return downModule;
+	);
+	
+	pure public getPreviousModule: (Train`Orientation) ==> (Module)
+	getPreviousModule(orientation) ==
+	(
+		if orientation = <Down>
+		then return upModule
+		else return downModule;
+	);
+	
 	public setUpModule: (Module) ==> ()
 	setUpModule(upModuleArg) == upModule := upModuleArg;
 	

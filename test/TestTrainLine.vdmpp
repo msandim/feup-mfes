@@ -6,18 +6,31 @@ operations
 	testSimpleMovement() ==
 	(
 		dcl line: TrainLine := TrainLineBuilder`buildMap1();
-		dcl train1Orientation: Train`Orientation := line.getTrain("train1").getOrientation();
+		dcl orientation: Train`Orientation := line.getTrain("train1").getOrientation();
 		
 		-- Test if the train is in the station, with a red light before the station and after the station
 		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("station1").getBlock(train1Orientation));
-		assertEqual(<Red>, line.getTrain("train1").getCurrentBlock().getSemaphore(train1Orientation));
-		assertEqual(<Red>, line.getTrain("train1").getCurrentBlock().getNextBlock(train1Orientation).getSemaphore(train1Orientation));
+		assertEqual(true, line.getTrain("train1").getIsStopped()); -- Test if we are stopped
+		assertEqual(<Red>, line.getBlockSemaphore("station1", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
 		
-		-- If we ask to leave the station, the semaphore before the station goes __ and the after goes green	
+		-- If we ask to leave the station, the semaphore before the station goes orange and the after goes green	
 		assertEqual(true, line.requestLeaveStation("train1"));
-		assertEqual(<Green>, line.getTrain("train1").getCurrentBlock().getNextBlock(train1Orientation).getSemaphore(train1Orientation));
+		assertEqual(<Green>, line.getBlockSemaphore("module2", orientation));
+		assertEqual(true, line.getTrain("train1").getIsStopped());
 		
 		line.moveTrain("train1");
+		assertEqual(false, line.getTrain("train1").getIsStopped());
+		assertEqual(<Yellow>, line.getBlockSemaphore("station1", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
+		
+		line.moveTrain("train1");
+		assertEqual(false, line.getTrain("train1").getIsStopped());
+		assertEqual(<Yellow>, line.getBlockSemaphore("station1", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module2.5", orientation));
+		
+		--line.moveTrain("train1");
 		
 		IO`println("Passed simple movement test");
 	);
