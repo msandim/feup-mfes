@@ -71,11 +71,14 @@ operations
 		assertEqual(<Yellow>, line.getBlockSemaphore("module3", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("station2", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("module4", orientation));
+		assertEqual(true, line.getTrain("train1").getIsStopped());
 		
 		assertEqual(true, line.requestLeaveStation("train1"));
+		assertEqual(true, line.getTrain("train1").getIsStopped());
 		assertEqual(<Green>, line.getBlockSemaphore("module4", orientation));
 		
 		line.moveTrain("train1");
+		assertEqual(false, line.getTrain("train1").getIsStopped());
 		assertEqual(<Yellow>, line.getBlockSemaphore("station2", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("module4", orientation));
 		assertEqual(<Green>, line.getBlockSemaphore("module5", orientation));
