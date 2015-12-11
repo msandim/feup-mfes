@@ -106,7 +106,7 @@ operations
 	)
 	pre status = <Stopped> and currentBlock.isInStation(); -- We can only execute this function when we're stopped in a station
 	
-	private getOppositeOrientation: () ==> (Orientation)
+	public getOppositeOrientation: () ==> (Orientation)
 	getOppositeOrientation() == 
 	(
 		if orientation = <Up>

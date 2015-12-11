@@ -2,35 +2,83 @@ class TestTrainLine is subclass of TestCase
 
 operations  
 
+	public testSemaphoreInit: () ==> ()
+	testSemaphoreInit() ==
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap1();
+		dcl orientation: Train`Orientation := line.getTrain("train1").getOrientation();
+		dcl opOrientation: Train`Orientation := line.getTrain("train1").getOppositeOrientation();
+		
+		-- Station with a train:
+		assertEqual(<Red>, line.getBlockSemaphore("station1", orientation));
+		assertEqual(<Yellow>, line.getBlockSemaphore("station1", opOrientation));
+		assertEqual(<Yellow>, line.getBlockSemaphore("module1", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module1", opOrientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
+		assertEqual(<Green>, line.getBlockSemaphore("module2", opOrientation));
+		
+		-- Station without a train:
+		
+		IO`println("Passed semaphore initialization");
+	);
+	
 	public testSimpleMovement: () ==> ()
 	testSimpleMovement() ==
 	(
 		dcl line: TrainLine := TrainLineBuilder`buildMap1();
 		dcl orientation: Train`Orientation := line.getTrain("train1").getOrientation();
-		
+				
 		-- Test if the train is in the station, with a red light before the station and after the station
 		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("station1").getBlock(orientation));
 		assertEqual(true, line.getTrain("train1").getIsStopped()); -- Test if we are stopped
+		assertEqual(<Yellow>, line.getBlockSemaphore("module1", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("station1", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
 		
 		-- If we ask to leave the station, the semaphore before the station goes orange and the after goes green	
 		assertEqual(true, line.requestLeaveStation("train1"));
+		assertEqual(<Yellow>, line.getBlockSemaphore("module1", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("station1", orientation));
 		assertEqual(<Green>, line.getBlockSemaphore("module2", orientation));
 		assertEqual(true, line.getTrain("train1").getIsStopped());
 		
 		line.moveTrain("train1");
+		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("module2").getBlock(orientation)); -- Check if we moved
 		assertEqual(false, line.getTrain("train1").getIsStopped());
+		assertEqual(<Green>, line.getBlockSemaphore("module1", orientation));
 		assertEqual(<Yellow>, line.getBlockSemaphore("station1", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
 		
 		line.moveTrain("train1");
+		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("module2.5").getBlock(orientation)); -- Check if we moved
 		assertEqual(false, line.getTrain("train1").getIsStopped());
 		assertEqual(<Yellow>, line.getBlockSemaphore("station1", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("module2.5", orientation));
+		assertEqual(<Green>, line.getBlockSemaphore("module3", orientation));
 		
-		--line.moveTrain("train1");
+		line.moveTrain("train1");
+		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("module3").getBlock(orientation));
+		assertEqual(false, line.getTrain("train1").getIsStopped());
+		assertEqual(<Yellow>, line.getBlockSemaphore("station1", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module2", orientation));
+		assertEqual(<Yellow>, line.getBlockSemaphore("module2.5", orientation));
+		assertEqual(<Yellow>, line.getBlockSemaphore("station2", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module3", orientation));
+		
+		line.moveTrain("train1");
+		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("station2").getBlock(orientation));
+		assertEqual(<Yellow>, line.getBlockSemaphore("module3", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("station2", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module4", orientation));
+		
+		assertEqual(true, line.requestLeaveStation("train1"));
+		assertEqual(<Green>, line.getBlockSemaphore("module4", orientation));
+		
+		line.moveTrain("train1");
+		assertEqual(<Yellow>, line.getBlockSemaphore("station2", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module4", orientation));
+		assertEqual(<Green>, line.getBlockSemaphore("module5", orientation));
 		
 		IO`println("Passed simple movement test");
 	);
@@ -38,9 +86,8 @@ operations
   public testAll: () ==> ()
   testAll() ==
   (
+  	testSemaphoreInit();
   	testSimpleMovement();
-  	-- Fazer teste de mudar para yellow quando carrega no botão
-  	-- Perguntar ao prof de qual é q tem de mudar para yellow
   );
   
 end TestTrainLine

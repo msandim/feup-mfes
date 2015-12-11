@@ -40,14 +40,6 @@ operations
 		trainLine := trainLineArg;
 		true_self := self;
 		
-		-- If its in a station, lets put the semaphores red
-		if isInStation()
-		then
-		(
-			upSemaphore := <Red>;
-			downSemaphore := <Red>;
-		);
-		
 		return self
 	);
 	
@@ -161,12 +153,6 @@ operations
 	);
 	
 	-- Sets
-	public setTrainLine: (TrainLine) ==> ()
-	setTrainLine(initialTrainLine) ==
-	(
-		trainLine := initialTrainLine;
-	);
-	
 	public setSemaphore: (Semaphore) * (Train`Orientation) ==> ()
 	setSemaphore(semaphoreArg, orientationArg) ==
 	(	

@@ -61,11 +61,13 @@ operations
 			
 			if module.getIsStation() then
 			(
-				module.getDownModule().getBlock(<Down>).setSemaphore(<Red>, <Down>);
-				module.getDownModule().getBlock(<Down>).setSemaphore(<Yellow>, <Up>);
+				-- In the station all sempahores are yellow:
+				module.getBlock(<Down>).setSemaphore(<Yellow>, <Down>);
+				module.getBlock(<Up>).setSemaphore(<Yellow>, <Up>);
 				
+				-- If we leave the station, we have to face a red semaphore:
+				module.getDownModule().getBlock(<Down>).setSemaphore(<Red>, <Down>);
 				module.getUpModule().getBlock(<Up>).setSemaphore(<Red>, <Up>);
-				module.getUpModule().getBlock(<Up>).setSemaphore(<Yellow>, <Down>);
 			); -- FALTA POS-CONDICAO!
 			
 		);
@@ -79,8 +81,10 @@ operations
 	addTrain(id, orientation, moduleId) ==
 	(
 		trains := trains ++ {id |-> new Train(orientation, modules(moduleId).getBlock(orientation))};
+		modules(moduleId).getBlock(orientation).getPreviousBlock(orientation).trainExit(orientation);
 		modules(moduleId).getBlock(orientation).trainEnter(orientation);
 	)
+	pre id not in set dom trains
 	post id in set dom trains and
 		trains(id).getCurrentBlock().getSemaphore(orientation) = <Red> and trains(id).getCurrentBlock().getSensor() = <Busy>;
 	--pre id not in set dom trains and -- Id of this train must be unique

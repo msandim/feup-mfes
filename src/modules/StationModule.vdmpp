@@ -13,7 +13,6 @@ operations
 	(
 		-- Instantiate the blocks of this StationModule:
 		id := idArg;
-		isStation := true;
 		upBlock := new Block(self, trainLineArg);
 		downBlock := new Block(self, trainLineArg);
 		return self
@@ -38,6 +37,9 @@ operations
 		else
 			return downBlock;
 	);
+	
+	public pure getIsStation: () ==> bool
+	getIsStation() == return true;
 
 functions
 

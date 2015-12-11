@@ -7,7 +7,6 @@ instance variables
 	protected id: TrainLine`String;
 	protected upModule: Module; -- module this module will reach if going in the 'Up' direction
 	protected downModule: Module; -- module this module will reach if going in the 'Down' direction
-	protected isStation: bool;
 
 operations
 
@@ -50,7 +49,8 @@ operations
 	getId() == return id;
 	
 	public pure getIsStation: () ==> bool
-	getIsStation() == return isStation;
+	getIsStation() ==
+	is subclass responsibility;
 	
 	public pure getUpModule: () ==> Module
 	getUpModule() == return upModule;
