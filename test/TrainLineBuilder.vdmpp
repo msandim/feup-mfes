@@ -40,6 +40,7 @@ operations
 		trainLine.addSimpleModule("module1");
 		trainLine.addStationModule("station1");
 		trainLine.addSimpleModule("module2");
+		trainLine.addSimpleModule("module2.5");
 		trainLine.addSimpleModule("module3");
 		trainLine.addStationModule("station2");
 		trainLine.addSimpleModule("module4");
@@ -52,6 +53,7 @@ operations
 		trainLine.closeCircularTrack();
 		
 		trainLine.addTrain("train1", <Up>, "station1");
+		trainLine.addTrain("train2", <Up>, "station2");
 		
 		return trainLine;
 	);

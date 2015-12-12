@@ -18,6 +18,12 @@ operations
 		assertEqual(<Green>, line.getBlockSemaphore("module2", opOrientation));
 		
 		-- Station without a train:
+		assertEqual(<Yellow>, line.getBlockSemaphore("station2", orientation));
+		assertEqual(<Yellow>, line.getBlockSemaphore("station2", opOrientation));
+		assertEqual(<Green>, line.getBlockSemaphore("module3", orientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module3", opOrientation));
+		assertEqual(<Red>, line.getBlockSemaphore("module4", orientation));
+		assertEqual(<Green>, line.getBlockSemaphore("module4", opOrientation));
 		
 		IO`println("Passed semaphore initialization");
 	);
