@@ -86,7 +86,7 @@ operations
 	)
 	pre id not in set dom trains
 	post id in set dom trains and
-		trains(id).getCurrentBlock().getSemaphore(orientation) = <Red> and trains(id).getCurrentBlock().getSensor() = <Busy> and -- The block is occupied and busy
+		trains(id).getCurrentBlock().getSemaphore(orientation).getColor() = <Red> and trains(id).getCurrentBlock().getSemaphore(orientation).getSensor() = <Busy> and -- The block is occupied and busy
 		trains(id).getCurrentBlock().getModule() = modules(moduleId);
 	--pre id not in set dom trains and -- Id of this train must be unique
 		--not exists t in set rng trains & t.getCurrentBlock().getModule() = modules(moduleId);
@@ -157,10 +157,10 @@ operations
 	public pure getModule: String ==> Module
 	getModule(id) == return modules(id);
 	
-	public pure getBlockSemaphore: String * Train`Orientation ==> Block`Semaphore
+	public pure getBlockSemaphore: String * Train`Orientation ==> Semaphore`Color
 	getBlockSemaphore(idArg, orientationArg) ==
 	(
-		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg);
+		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg).getColor();
 	);
 	
 	-- Gets

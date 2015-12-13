@@ -7,7 +7,7 @@ operations
 	(
 		dcl line: TrainLine := TrainLineBuilder`buildMap1();
 		dcl orientation: Train`Orientation := line.getTrain("train1").getOrientation();
-		dcl opOrientation: Train`Orientation := line.getTrain("train1").getOppositeOrientation();
+		dcl opOrientation: Train`Orientation := line.getTrain("train1").oppositeOrientation();
 		
 		-- Station with a train:
 		assertEqual(<Red>, line.getBlockSemaphore("station1", orientation));
@@ -101,7 +101,7 @@ operations
 		
 		assertEqual(true, line.requestLeaveStation("train1"));
 		line.moveTrain("train1");
-		
+
 		assertEqual(false, line.requestLeaveStation("train2"));
 		assertEqual(false, line.requestLeaveStation("train3"));
 		
