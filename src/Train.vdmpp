@@ -8,7 +8,7 @@ instance variables
 	private id: TrainLine`String;
 	
 	private orientation: Orientation := <Up>;
-	private status: MovementStatus := <Stopped>; -- tou a considerar que só se mete comboios nas stations
+	private status: MovementStatus := <Stopped>;
 	private currentBlock: Block;
 	
 operations
@@ -26,6 +26,9 @@ operations
 	public move: () ==> ()
 	move() ==
 	(
+		-- Update status:
+		status := <Moving>;
+		
 		-- Make exit operations on the block we were on:
 		currentBlock.trainExit(orientation);
 	
@@ -36,16 +39,22 @@ operations
 		currentBlock := currentBlock.getNextBlock(orientation);
 		
 		-- If we move into a station, we stop. Otherwise, we're moving:
+		/*
 		if currentBlock.isInStation()
 		then
 			status := <Stopped>
 		else
-			status := <Moving>;
+			status := <Moving>; */
 	)
 	pre currentBlock.getNextBlock(orientation).canEnter(orientation)
 	post currentBlock = currentBlock~.getNextBlock(orientation); -- New block is equals to old block 
 		-- not currentBlock.canEnter(orientation); -- and -- We cannot enter in the new block (New block is red)
 	  --currentBlock~.getSemaphore() = <Yellow>; -- Old block is yellow
+	  
+	public stopAction: () ==> ()
+	stopAction() == status := <Stopped>
+	pre status = <Moving>;
+	
 		
 	public requestLeaveStation: () ==> bool
 	requestLeaveStation() ==

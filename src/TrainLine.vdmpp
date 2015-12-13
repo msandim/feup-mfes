@@ -86,7 +86,8 @@ operations
 	)
 	pre id not in set dom trains
 	post id in set dom trains and
-		trains(id).getCurrentBlock().getSemaphore(orientation) = <Red> and trains(id).getCurrentBlock().getSensor() = <Busy>;
+		trains(id).getCurrentBlock().getSemaphore(orientation) = <Red> and trains(id).getCurrentBlock().getSensor() = <Busy> and -- The block is occupied and busy
+		trains(id).getCurrentBlock().getModule() = modules(moduleId);
 	--pre id not in set dom trains and -- Id of this train must be unique
 		--not exists t in set rng trains & t.getCurrentBlock().getModule() = modules(moduleId);
 	--post card trains = card trains~ + 1 and -- Increment one in the trains sequence
@@ -104,6 +105,10 @@ operations
 	-- Moves a train with a specific id
 	public moveTrain: (String) ==> ()
 	moveTrain(id) == trains(id).move();
+	
+	-- Stop train in a simple block
+	public stopTrain: (String) ==> ()
+	stopTrain(id) == trains(id).stopAction();
 	
 	-- Requests a specific train to leave a station
 	public requestLeaveStation: (String) ==> bool
