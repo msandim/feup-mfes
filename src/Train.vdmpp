@@ -19,7 +19,7 @@ operations
 	(
 		orientation := initialOrientation;
 		currentBlock := initialBlock;
-		return self
+		return self;
 	);
 	
 	-- Move a train

@@ -21,8 +21,8 @@ instance variables
 	-- There must be at least 1 module between stations and at least 2 stations
 	inv isLineBuilt => forall m in set dom modules &
 		(modules(m).getIsStation() =>
-			modules(m).getNextBlock(<Up>).getModule().getIsStation() = false
-			and modules(m).getNextBlock(<Down>).getModule().getIsStation() = false) 
+			modules(m).getNextBlock(<Up>).isInStation() = false
+			and modules(m).getNextBlock(<Down>).isInStation() = false) 
 	
 	
 operations
