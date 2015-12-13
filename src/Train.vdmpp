@@ -37,19 +37,22 @@ operations
 			
 		-- Move to the next block:	
 		currentBlock := currentBlock.getNextBlock(orientation);
-		
-		-- If we move into a station, we stop. Otherwise, we're moving:
-		/*
-		if currentBlock.isInStation()
-		then
-			status := <Stopped>
-		else
-			status := <Moving>; */
 	)
 	pre currentBlock.getNextBlock(orientation).canEnter(orientation)
-	post currentBlock = currentBlock~.getNextBlock(orientation); -- New block is equals to old block 
-		-- not currentBlock.canEnter(orientation); -- and -- We cannot enter in the new block (New block is red)
-	  --currentBlock~.getSemaphore() = <Yellow>; -- Old block is yellow
+	post currentBlock = currentBlock~.getNextBlock(orientation) and -- New block is equal to old block's next block
+		not currentBlock.canEnter(orientation) and -- We cannot enter in the new block (New block is red)
+	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then -- Check if sempahore from the block we're exiting is ok
+	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Red>
+	  	else
+	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
+	  ) and
+	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Red>
+	  	elseif currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
+	  	else
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Green>
+	  );
 	  
 	public stopAction: () ==> ()
 	stopAction() == status := <Stopped>
@@ -60,26 +63,18 @@ operations
 	requestLeaveStation() ==
 	(
 		-- See if we can exit ==> the set of blocks until the next station must be cleared:
-		
 		if isPathClearedUntilNextStation()
 		then
-		(
-			-- Set the semaphores in the opposite direction until the nextStation to <Red>
-			--dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
-			--while not nextBlock.getModule().getIsStation() do
-			--(
-			--	nextBlock.setSemaphore(<Red>, getOppositeOrientation());
-			--	nextBlock := nextBlock.getNextBlock(orientation);
-			--);
-			
+		(	
 			currentBlock.getNextBlock(orientation).setSemaphore(<Green>, orientation);
-
-			return true; -- a seguir fazer o move
+			return true;
 		)
 		else
 			return false;
 	)
-	pre status = <Stopped> and currentBlock.isInStation();
+	pre status = <Stopped> and currentBlock.isInStation() and currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>
+	post if isPathClearedUntilNextStation() then currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Green>
+		else currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>;
 	
 	-- Gets
 	pure public getCurrentBlock: () ==> Block
@@ -101,7 +96,7 @@ operations
 	getId() == return id;
 	
 	-- Private methods:
-	private isPathClearedUntilNextStation: () ==> bool
+	private pure isPathClearedUntilNextStation: () ==> bool
 	isPathClearedUntilNextStation() ==
 	(
 		dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
@@ -116,7 +111,7 @@ operations
 	)
 	pre status = <Stopped> and currentBlock.isInStation(); -- We can only execute this function when we're stopped in a station
 	
-	public oppositeOrientation: () ==> (Orientation)
+	public pure oppositeOrientation: () ==> (Orientation)
 	oppositeOrientation() == 
 	(
 		if orientation = <Up>

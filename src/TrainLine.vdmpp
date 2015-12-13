@@ -90,19 +90,6 @@ operations
 	post id in set dom trains and
 		trains(id).getCurrentBlock().getSemaphore(orientation).getColor() = <Red> and trains(id).getCurrentBlock().getSemaphore(orientation).getSensor() = <Busy> and -- The block is occupied and busy
 		trains(id).getCurrentBlock().getModule() = modules(moduleId);
-	--pre id not in set dom trains and -- Id of this train must be unique
-		--not exists t in set rng trains & t.getCurrentBlock().getModule() = modules(moduleId);
-	--post card trains = card trains~ + 1 and -- Increment one in the trains sequence
-		--exists1 t in set trains & t.getCurrentBlock().getModule() = modules(moduleId); -- One train now is in the block
-		
-		
-	/**
-	pre moduleId in set dom modules and -- The module we want the train on must be valid
-		not exists t1 in set rng trains & t1.getBlock().getModule() = modules(moduleId) and -- The module must not have any train on
-		id not in set dom trains -- An id with this train must not exist
-	post id in set dom trains and -- The id was added to the modules
-		exists1 t1 in set rng trains & t1.getBlock().getModule() = modules(moduleId); -- The train is now in this module
-		*/
 	
 	-- Moves a train with a specific id
 	public moveTrain: (String) ==> ()
