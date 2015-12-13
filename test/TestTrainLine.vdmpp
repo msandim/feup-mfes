@@ -7,7 +7,7 @@ operations
 	(
 		dcl line: TrainLine := TrainLineBuilder`buildMap1();
 		dcl orientation: Train`Orientation := line.getTrain("train1").getOrientation();
-		dcl opOrientation: Train`Orientation := line.getTrain("train1").getOppositeOrientation();
+		dcl opOrientation: Train`Orientation := line.getTrain("train1").oppositeOrientation();
 		
 		-- Station with a train:
 		assertEqual(<Red>, line.getBlockSemaphore("station1", orientation));
@@ -73,6 +73,7 @@ operations
 		assertEqual(<Red>, line.getBlockSemaphore("module3", orientation));
 		
 		line.moveTrain("train1");
+		line.stopTrain("train1");
 		assertEqual(line.getTrain("train1").getCurrentBlock(), line.getModule("station2").getBlock(orientation));
 		assertEqual(<Yellow>, line.getBlockSemaphore("module3", orientation));
 		assertEqual(<Red>, line.getBlockSemaphore("station2", orientation));
@@ -91,12 +92,64 @@ operations
 		
 		IO`println("Passed simple movement test");
 	);
+	
+	public testOnlyOneTrainBetweenTwoTracks: () ==> ()
+	testOnlyOneTrainBetweenTwoTracks() == 
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap2();
+		--dcl orientation1: Train`Orientation := line.getTrain("train1").getOrientation();
+		
+		assertEqual(true, line.requestLeaveStation("train1"));
+		line.moveTrain("train1");
 
+		assertEqual(false, line.requestLeaveStation("train2"));
+		assertEqual(false, line.requestLeaveStation("train3"));
+		
+		IO`println("Passed only one train between 2 tracks test");
+	);
+	
+	public testMultiTrain: () ==> ()
+	testMultiTrain() ==
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap2();
+		
+		assertEqual(true, line.requestLeaveStation("train2"));
+		line.moveTrain("train2");
+		
+		-- Movings for train 3:
+		assertEqual(true, line.requestLeaveStation("train3"));
+		line.moveTrain("train3");
+		line.moveTrain("train3");
+		line.moveTrain("train3");
+		line.stopTrain("train3");
+		assertEqual(line.getModule("station2"), line.getTrain("train3").getCurrentBlock().getModule());
+		assertEqual(false, line.requestLeaveStation("train3"));
+		-- End of movings for train 3, while moving train 2
+		
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.stopTrain("train2");
+		assertEqual(line.getModule("station1"), line.getTrain("train2").getCurrentBlock().getModule());
+		
+		assertEqual(true, line.requestLeaveStation("train1"));
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.stopTrain("train1");
+		assertEqual(line.getModule("station2"), line.getTrain("train1").getCurrentBlock().getModule());
+		
+		IO`println("Passed multi train test");
+	);
+	
   public testAll: () ==> ()
   testAll() ==
   (
   	testSemaphoreInit();
   	testSimpleMovement();
+  	testMultiTrain();
+  	testOnlyOneTrainBetweenTwoTracks();
   );
   
 end TestTrainLine

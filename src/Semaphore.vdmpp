@@ -1,0 +1,28 @@
+class Semaphore
+types
+	public Color = <Red> | <Yellow> | <Green>;
+	public SensorStatus = <Free> | <Busy>;
+	
+instance variables
+	private semaphoreStatus: Color := <Green>;
+	private sensorStatus: SensorStatus := <Free>;
+	private isSemaphoreAvailable: bool := true;
+	private isSensorAvailable: bool := true;
+	
+operations
+	public pure isColor: (Color) ==> bool
+	isColor(color) == return semaphoreStatus = color and isSemaphoreAvailable;
+	
+	public pure getColorDirect: () ==> Color
+	getColorDirect() == return semaphoreStatus;
+	
+	public pure isSensor: (SensorStatus) ==> bool
+	isSensor(sensor) == return sensorStatus = sensor and isSensorAvailable;
+	
+	public setColor: (Color) ==> ()
+	setColor(color) == semaphoreStatus := color;
+	
+	public setSensor: (SensorStatus) ==> ()
+	setSensor(status) == sensorStatus := status;
+	
+end Semaphore

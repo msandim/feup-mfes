@@ -8,7 +8,7 @@ instance variables
 	private id: TrainLine`String;
 	
 	private orientation: Orientation := <Up>;
-	private status: MovementStatus := <Stopped>; -- tou a considerar que só se mete comboios nas stations
+	private status: MovementStatus := <Stopped>;
 	private currentBlock: Block;
 	
 operations
@@ -19,13 +19,16 @@ operations
 	(
 		orientation := initialOrientation;
 		currentBlock := initialBlock;
-		return self
+		return self;
 	);
 	
 	-- Move a train
 	public move: () ==> ()
 	move() ==
 	(
+		-- Update status:
+		status := <Moving>;
+		
 		-- Make exit operations on the block we were on:
 		currentBlock.trainExit(orientation);
 	
@@ -34,43 +37,45 @@ operations
 			
 		-- Move to the next block:	
 		currentBlock := currentBlock.getNextBlock(orientation);
-		
-		-- If we move into a station, we stop. Otherwise, we're moving:
-		if currentBlock.isInStation()
-		then
-			status := <Stopped>
-		else
-			status := <Moving>;
 	)
 	pre currentBlock.getNextBlock(orientation).canEnter(orientation)
-	post currentBlock = currentBlock~.getNextBlock(orientation); -- New block is equals to old block 
-		-- not currentBlock.canEnter(orientation); -- and -- We cannot enter in the new block (New block is red)
-	  --currentBlock~.getSemaphore() = <Yellow>; -- Old block is yellow
+	post currentBlock = currentBlock~.getNextBlock(orientation) and -- New block is equal to old block's next block
+		not currentBlock.canEnter(orientation) and -- We cannot enter in the new block (New block is red)
+	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then -- Check if sempahore from the block we're exiting is ok
+	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Red>)
+	  	else
+	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Yellow>)
+	  ) and
+	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() 
+	  			or currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).isSensor(<Busy>) then -- We should put red if its a block next to a station, or a train is there
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Red>)
+	  	elseif currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Yellow>)
+	  	else
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Green>)
+	  );
+	  
+	public stopAction: () ==> ()
+	stopAction() == status := <Stopped>
+	pre status = <Moving>;
+	
 		
 	public requestLeaveStation: () ==> bool
 	requestLeaveStation() ==
 	(
 		-- See if we can exit ==> the set of blocks until the next station must be cleared:
-		
 		if isPathClearedUntilNextStation()
 		then
-		(
-			-- Set the semaphores in the opposite direction until the nextStation to <Red>
-			--dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
-			--while not nextBlock.getModule().getIsStation() do
-			--(
-			--	nextBlock.setSemaphore(<Red>, getOppositeOrientation());
-			--	nextBlock := nextBlock.getNextBlock(orientation);
-			--);
-			
+		(	
 			currentBlock.getNextBlock(orientation).setSemaphore(<Green>, orientation);
-
-			return true; -- a seguir fazer o move
+			return true;
 		)
 		else
 			return false;
 	)
-	pre status = <Stopped> and currentBlock.isInStation();
+	pre status = <Stopped> and currentBlock.isInStation() and currentBlock.getNextBlock(orientation).getSemaphore(orientation).isColor(<Red>)
+	post if isPathClearedUntilNextStation() then currentBlock.getNextBlock(orientation).getSemaphore(orientation).isColor(<Green>)
+		else currentBlock.getNextBlock(orientation).getSemaphore(orientation).isColor(<Red>);
 	
 	-- Gets
 	pure public getCurrentBlock: () ==> Block
@@ -92,22 +97,23 @@ operations
 	getId() == return id;
 	
 	-- Private methods:
-	private isPathClearedUntilNextStation: () ==> bool
+	private pure isPathClearedUntilNextStation: () ==> bool
 	isPathClearedUntilNextStation() ==
 	(
 		dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
 		
 		-- Iterate the next blocks and check if we can make it to the next station without being stuck somewhere in between:
-		while (not nextBlock.getModule().getIsStation()) and nextBlock.getSensor() = <Free> do
+		while (not nextBlock.getModule().getIsStation()) and nextBlock.getSemaphore(orientation).isSensor(<Free>) and nextBlock.getSemaphore(oppositeOrientation()).isSensor(<Free>) do
 			nextBlock := nextBlock.getNextBlock(orientation);
 		
 		-- If we got to the next station in the previous cycle, then the path is clear, but we have to check if it's busy
-		return (nextBlock.getModule().getIsStation() and nextBlock.getSensor() = <Free>);
+		-- But in the station, we only want to check if the semaphore for our orientaton is on
+		return (nextBlock.getModule().getIsStation() and nextBlock.getSemaphore(orientation).isSensor(<Free>));
 	)
 	pre status = <Stopped> and currentBlock.isInStation(); -- We can only execute this function when we're stopped in a station
 	
-	public getOppositeOrientation: () ==> (Orientation)
-	getOppositeOrientation() == 
+	public pure oppositeOrientation: () ==> (Orientation)
+	oppositeOrientation() == 
 	(
 		if orientation = <Up>
 		then return <Down>

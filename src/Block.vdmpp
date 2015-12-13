@@ -1,16 +1,13 @@
 class Block
 
 types
-	public Semaphore = <Red> | <Yellow> | <Green> | <Unavailable>;
-	public Sensor = <Free> | <Busy> | <Unavailable>;
 		
 instance variables
 	private module : Module;
 	private trainLine: TrainLine;
 	
-	private sensor: Sensor := <Free>;
-	private upSemaphore: Semaphore := <Green>;
-	private downSemaphore: Semaphore := <Green>;
+	private upSemaphore: Semaphore := new Semaphore();
+	private downSemaphore: Semaphore := new Semaphore();
 	private true_self: Block;
 	
 	-- Invariants:
@@ -47,15 +44,15 @@ operations
 	trainEnter(trainOrientation) ==
 	(
 		if trainOrientation = <Up>
-		then atomic
+		then
 		(
-			upSemaphore := <Red>;
-			sensor := <Busy>;
+			upSemaphore.setColor(<Red>);
+			upSemaphore.setSensor(<Busy>);
 		)
-		else atomic
+		else
 		(
-			downSemaphore := <Red>;
-			sensor := <Busy>;
+			downSemaphore.setColor(<Red>);
+			downSemaphore.setSensor(<Busy>);
 		);	
 	);
 	
@@ -63,104 +60,84 @@ operations
 	trainExit(trainOrientation) ==
 	(
 		-- Update the block we're leaving
-		dcl semaphoreNextState: Semaphore;
-		dcl previousSemaphoreNextState: Semaphore;
+		dcl semaphoreNextColor: Semaphore`Color;
+		dcl previousSemaphoreNextColor: Semaphore`Color;
 		
 		-- If this is a module after a station, it must be red at all time, otherwise yellow
 		if getModule().getPreviousModule(trainOrientation).getIsStation()
 		then
-			semaphoreNextState := <Red>
+			semaphoreNextColor := <Red>
 		else
-			semaphoreNextState := <Yellow>;
+			semaphoreNextColor := <Yellow>;
 	
 		if trainOrientation = <Up>
-		then atomic
+		then
 		(
-			upSemaphore := semaphoreNextState
-			sensor := <Free>;
+			upSemaphore.setColor(semaphoreNextColor);
+			upSemaphore.setSensor(<Free>);
 		)
-		else atomic
+		else
 		(
-			downSemaphore := semaphoreNextState
-			sensor := <Free>;
+			downSemaphore.setColor(semaphoreNextColor);
+			downSemaphore.setSensor(<Free>);
 		);
 		
 		-- Check the previous block to the block we're leaving:
-		-- If the previous block from the block we're leaving is a station, leave it yellow
-		if (getModule().getPreviousModule(trainOrientation).getIsStation()) then
-			previousSemaphoreNextState := <Yellow>
-		elseif (getModule().getPreviousModule(trainOrientation).getPreviousModule(trainOrientation).getIsStation()) then -- If the previous-previous block is a station, then it must be red
-			previousSemaphoreNextState := <Red>
+		-- If the previous-previous block is a station or if a train is there, then it must be red
+		if getPreviousBlock(trainOrientation).getPreviousBlock(trainOrientation).isInStation()
+				or getPreviousBlock(trainOrientation).getSemaphore(trainOrientation).isSensor(<Busy>) then
+			previousSemaphoreNextColor := <Red>
+		elseif getPreviousBlock(trainOrientation).isInStation() then -- If the previous block from the block we're leaving is a station, leave it yellow
+			previousSemaphoreNextColor := <Yellow>
 		else
-			previousSemaphoreNextState := <Green>;
+			previousSemaphoreNextColor := <Green>;
 			
-		getModule().getPreviousModule(trainOrientation).getBlock(trainOrientation).setSemaphore(previousSemaphoreNextState, trainOrientation);
+		getModule().getPreviousModule(trainOrientation).getBlock(trainOrientation).setSemaphore(previousSemaphoreNextColor, trainOrientation);
 	);
 	
 	-- Methods
 	pure public canEnter: (Train`Orientation) ==> (bool)
 	canEnter(orientationArg) ==
-	(
 		if orientationArg = <Up>
 		then
-			return upSemaphore <> <Red>
+			return upSemaphore.isColor(<Yellow>) or upSemaphore.isColor(<Green>)
 		else
-			return downSemaphore <> <Red>;
-	);
+			return downSemaphore.isColor(<Yellow>) or downSemaphore.isColor(<Green>);
 	
 	pure public canEnterNextBlock: (Train`Orientation) ==> (bool)
-	canEnterNextBlock(orientation) ==
-	(
-		return getNextBlock(orientation).canEnter(orientation);
-	);
+	canEnterNextBlock(orientation) == return getNextBlock(orientation).canEnter(orientation);
 	
 	pure public isInStation: () ==> (bool)
-	isInStation() ==
-	(
-		return module.getIsStation();
-	);
+	isInStation() == return module.getIsStation();
 	
 	-- Gets
 	pure public getSemaphore: (Train`Orientation) ==> (Semaphore)
 	getSemaphore(orientationArg) == 
-	(
 		if orientationArg = <Up>
 		then
 			return upSemaphore
 		else
 			return downSemaphore;
-	);
 	
-	pure public getSensor: () ==> (Sensor)
-	getSensor() == return sensor;
+	--pure public getSensor: (Train`Orientation) ==> (Sensor)
+	--getSensor() == return sensor;
 	
 	pure public getModule: () ==> (Module)
-	getModule() ==
-	(
-		return module;
-	);
+	getModule() == return module;
 	
 	pure public getNextBlock: (Train`Orientation) ==> (Block)
-	getNextBlock(orientation) == 
-	(
-		return module.getNextBlock(orientation);
-	);
+	getNextBlock(orientation) == return module.getNextBlock(orientation);
 	
 	pure public getPreviousBlock: (Train`Orientation) ==> (Block)
-	getPreviousBlock(orientation) == 
-	(
-		return module.getPreviousBlock(orientation);
-	);
+	getPreviousBlock(orientation) == return module.getPreviousBlock(orientation);
 	
 	-- Sets
-	public setSemaphore: (Semaphore) * (Train`Orientation) ==> ()
+	public setSemaphore: (Semaphore`Color) * (Train`Orientation) ==> ()
 	setSemaphore(semaphoreArg, orientationArg) ==
-	(	
 		if orientationArg = <Up>
 		then
-			upSemaphore := semaphoreArg
+			upSemaphore.setColor(semaphoreArg)
 		else
-			downSemaphore := semaphoreArg;
-	);
+			downSemaphore.setColor(semaphoreArg);
 
 end Block

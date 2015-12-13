@@ -10,13 +10,6 @@ instance variables
 
 operations
 
-	/*public Module: (Module) * (Module) ==> Module
-	Module(upModuleArg, downModuleArg) ==
-	(
-		upModule := upModuleArg;
-		downModule := downModuleArg;
-	);*/
-
 	public pure canEnter: (Train`Orientation) ==> (bool)
 	canEnter(orientation) ==
 	is subclass responsibility;

@@ -53,7 +53,8 @@ operations
 		trainLine.closeCircularTrack();
 		
 		trainLine.addTrain("train1", <Up>, "station1");
-		trainLine.addTrain("train2", <Up>, "station2");
+		trainLine.addTrain("train2", <Down>, "station2");
+		trainLine.addTrain("train3", <Down>, "station3");
 		
 		return trainLine;
 	);
