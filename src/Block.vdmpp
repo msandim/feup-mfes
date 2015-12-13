@@ -1,16 +1,11 @@
 class Block
 
 types
-	--public Semaphore = <Red> | <Yellow> | <Green> | <Unavailable>;
-	--public Sensor = <Free> | <Busy> | <Unavailable>;
 		
 instance variables
 	private module : Module;
 	private trainLine: TrainLine;
 	
-	--private sensor: Sensor := <Free>;
-	--private upSemaphore: Semaphore := <Green>;
-	--private downSemaphore: Semaphore := <Green>;
 	private upSemaphore: Semaphore := new Semaphore();
 	private downSemaphore: Semaphore := new Semaphore();
 	private true_self: Block;
@@ -65,38 +60,38 @@ operations
 	trainExit(trainOrientation) ==
 	(
 		-- Update the block we're leaving
-		dcl semaphoreNextState: Semaphore`Color;
-		dcl previousSemaphoreNextState: Semaphore`Color;
+		dcl semaphoreNextColor: Semaphore`Color;
+		dcl previousSemaphoreNextColor: Semaphore`Color;
 		
 		-- If this is a module after a station, it must be red at all time, otherwise yellow
 		if getModule().getPreviousModule(trainOrientation).getIsStation()
 		then
-			semaphoreNextState := <Red>
+			semaphoreNextColor := <Red>
 		else
-			semaphoreNextState := <Yellow>;
+			semaphoreNextColor := <Yellow>;
 	
 		if trainOrientation = <Up>
 		then
 		(
-			upSemaphore.setColor(semaphoreNextState);
+			upSemaphore.setColor(semaphoreNextColor);
 			upSemaphore.setSensor(<Free>);
 		)
 		else
 		(
-			downSemaphore.setColor(semaphoreNextState);
+			downSemaphore.setColor(semaphoreNextColor);
 			downSemaphore.setSensor(<Free>);
 		);
 		
 		-- Check the previous block to the block we're leaving:
 		-- If the previous block from the block we're leaving is a station, leave it yellow
 		if (getModule().getPreviousModule(trainOrientation).getIsStation()) then
-			previousSemaphoreNextState := <Yellow>
+			previousSemaphoreNextColor := <Yellow>
 		elseif (getModule().getPreviousModule(trainOrientation).getPreviousModule(trainOrientation).getIsStation()) then -- If the previous-previous block is a station, then it must be red
-			previousSemaphoreNextState := <Red>
+			previousSemaphoreNextColor := <Red>
 		else
-			previousSemaphoreNextState := <Green>;
+			previousSemaphoreNextColor := <Green>;
 			
-		getModule().getPreviousModule(trainOrientation).getBlock(trainOrientation).setSemaphore(previousSemaphoreNextState, trainOrientation);
+		getModule().getPreviousModule(trainOrientation).getBlock(trainOrientation).setSemaphore(previousSemaphoreNextColor, trainOrientation);
 	);
 	
 	-- Methods
