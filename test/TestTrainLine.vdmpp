@@ -105,7 +105,7 @@ operations
 		assertEqual(false, line.requestLeaveStation("train2"));
 		assertEqual(false, line.requestLeaveStation("train3"));
 		
-		IO`println("Passed only one train between 2 tracks test")
+		IO`println("Passed only one train between 2 tracks test");
 	);
 	
 	public testMultiTrain: () ==> ()
@@ -114,16 +114,33 @@ operations
 		dcl line: TrainLine := TrainLineBuilder`buildMap2();
 		dcl orientation1: Train`Orientation := line.getTrain("train1").getOrientation();
 		dcl orientation2: Train`Orientation := line.getTrain("train2").getOrientation();
-		return;
+		dcl orientation2: Train`Orientation := line.getTrain("train3").getOrientation();
+		
+		assertEqual(true, line.requestLeaveStation("train2"));
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.stopTrain("train2");
+		assertEqual(line.getModule("station1"), line.getTrain("train2").getCurrentBlock().getModule());
+		
+		assertEqual(true, line.requestLeaveStation("train1"));
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.stopTrain("train1");
+		assertEqual(line.getModule("station2"), line.getTrain("train1").getCurrentBlock().getModule());
+		
+		IO`println("Passed multi train test");
 	);
 	
-	
-
   public testAll: () ==> ()
   testAll() ==
   (
   	testSemaphoreInit();
   	testSimpleMovement();
+  	testMultiTrain();
   	testOnlyOneTrainBetweenTwoTracks();
   );
   

@@ -46,7 +46,8 @@ operations
 	  	else
 	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
 	  ) and
-	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then
+	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() 
+	  			or currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getSensor() = <Busy> then -- We should put red if its a block next to a station, or a train is there
 	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Red>
 	  	elseif currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then
 	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>

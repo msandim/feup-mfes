@@ -24,7 +24,6 @@ instance variables
 			modules(m).getNextBlock(<Up>).isInStation() = false
 			and modules(m).getNextBlock(<Down>).isInStation() = false) 
 	
-	
 operations
 	
 	-- ** Adds a simple module (between 2 stations) to the line: **
@@ -86,7 +85,11 @@ operations
 		modules(moduleId).getBlock(orientation).getPreviousBlock(orientation).trainExit(orientation);
 		modules(moduleId).getBlock(orientation).trainEnter(orientation);
 	)
-	pre isLineBuilt = true and id not in set dom trains
+	pre isLineBuilt = true and
+	id not in set dom trains and 
+	moduleId in set dom modules and
+	modules(moduleId).getIsStation() and -- We can only put new trains in stations
+	not exists t1 in set dom trains & trains(t1).getCurrentBlock().getModule() = modules(moduleId) -- The station must be empty
 	post id in set dom trains and
 		trains(id).getCurrentBlock().getSemaphore(orientation).getColor() = <Red> and trains(id).getCurrentBlock().getSemaphore(orientation).getSensor() = <Busy> and -- The block is occupied and busy
 		trains(id).getCurrentBlock().getModule() = modules(moduleId);
