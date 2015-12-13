@@ -14,9 +14,10 @@ instance variables
 operations
 
 	-- Constructor
-	public Train: (Orientation) * (Block) ==> Train
-	Train(initialOrientation, initialBlock) ==
+	public Train: (TrainLine`String) * (Orientation) * (Block) ==> Train
+	Train(idArg, initialOrientation, initialBlock) ==
 	(
+		id := idArg;
 		orientation := initialOrientation;
 		currentBlock := initialBlock;
 		return self;

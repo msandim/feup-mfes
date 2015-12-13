@@ -81,7 +81,7 @@ operations
 	public addTrain: (String) * (Train`Orientation) * (String) ==> ()
 	addTrain(id, orientation, moduleId) ==
 	(
-		trains := trains ++ {id |-> new Train(orientation, modules(moduleId).getBlock(orientation))};
+		trains := trains ++ {id |-> new Train(id, orientation, modules(moduleId).getBlock(orientation))};
 		modules(moduleId).getBlock(orientation).getPreviousBlock(orientation).trainExit(orientation);
 		modules(moduleId).getBlock(orientation).trainEnter(orientation);
 	)
@@ -159,6 +159,11 @@ operations
 	);
 	
 	-- Gets
+	pure public getModules: () ==> (map String to Module)
+	getModules() == 
+	(
+		return modules;
+	);
 	pure public getTrains: () ==> (map String to Train)
 	getTrains() == 
 	(
