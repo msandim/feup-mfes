@@ -83,11 +83,12 @@ operations
 		);
 		
 		-- Check the previous block to the block we're leaving:
-		-- If the previous block from the block we're leaving is a station, leave it yellow
-		if (getPreviousBlock(trainOrientation).isInStation()) then
-			previousSemaphoreNextColor := <Yellow>
-		elseif (getPreviousBlock(trainOrientation).getPreviousBlock(trainOrientation).isInStation() or getPreviousBlock(trainOrientation).getSemaphore(trainOrientation).getSensor() = <Busy>) then -- If the previous-previous block is a station, then it must be red, or if a train is there
+		-- If the previous-previous block is a station or if a train is there, then it must be red
+		if getPreviousBlock(trainOrientation).getPreviousBlock(trainOrientation).isInStation()
+				or getPreviousBlock(trainOrientation).getSemaphore(trainOrientation).getSensor() = <Busy> then
 			previousSemaphoreNextColor := <Red>
+		elseif getPreviousBlock(trainOrientation).isInStation() then -- If the previous block from the block we're leaving is a station, leave it yellow
+			previousSemaphoreNextColor := <Yellow>
 		else
 			previousSemaphoreNextColor := <Green>;
 			

@@ -112,12 +112,20 @@ operations
 	testMultiTrain() ==
 	(
 		dcl line: TrainLine := TrainLineBuilder`buildMap2();
-		dcl orientation1: Train`Orientation := line.getTrain("train1").getOrientation();
-		dcl orientation2: Train`Orientation := line.getTrain("train2").getOrientation();
-		dcl orientation2: Train`Orientation := line.getTrain("train3").getOrientation();
 		
 		assertEqual(true, line.requestLeaveStation("train2"));
 		line.moveTrain("train2");
+		
+		-- Movings for train 3:
+		assertEqual(true, line.requestLeaveStation("train3"));
+		line.moveTrain("train3");
+		line.moveTrain("train3");
+		line.moveTrain("train3");
+		line.stopTrain("train3");
+		assertEqual(line.getModule("station2"), line.getTrain("train3").getCurrentBlock().getModule());
+		assertEqual(false, line.requestLeaveStation("train3"));
+		-- End of movings for train 3, while moving train 2
+		
 		line.moveTrain("train2");
 		line.moveTrain("train2");
 		line.moveTrain("train2");
