@@ -21,6 +21,30 @@ public class Application
 		mTrainLine.addTrain("train1", "<Up>", "station1");
 	}
 
+	public void moveTrain(String trainId)
+	{
+		// Get train:
+		Train train = getTrain(trainId);
+
+		// Move train:
+		train.move();
+	}
+
+	public void stopTrain(String trainId)
+	{
+		// Get train:
+		Train train = getTrain(trainId);
+
+		// Stop train:
+		train.stopAction();
+	}
+
+	public boolean requestLeaveStation(Train train)
+	{
+		// Ask for permission to leave station:
+		return train.requestLeaveStation();
+	}
+
 	public TrainLine getTrainLine()
 	{
 		// Get train line:

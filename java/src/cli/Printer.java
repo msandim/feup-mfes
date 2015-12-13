@@ -16,6 +16,30 @@ public class Printer
 		mApplication = application;
 	}
 
+	public void printMoveTrainMessage(Train train)
+	{
+		print("Moving Train ");
+		print(train.getId());
+		print(" from Module ");
+		print(train.getCurrentBlock().getModule().getId());
+		print(" to Module ");
+		print(train.getNextBlock().getModule().getId());
+		print("\n");
+	}
+	public void printRequestLeaveStation(Train train, boolean result)
+	{
+		print("Requesting to leave Station ");
+		print(train.getCurrentBlock().getModule().getId());
+		print("\n");
+
+		if(result)
+			print("Request accepted!");
+		else
+			print("Request denied!");
+
+		print("\n");
+	}
+
 	public void printBlock(String moduleId, Object orientation, Block block)
 	{
 		print("Block:");

@@ -20,6 +20,32 @@ class CommandLineInterface
 		mPrinter = new Printer(mApplication);
 	}
 
+	public void moveTrain(String trainId)
+	{
+		// Get train:
+		Train train = mApplication.getTrain(trainId);
+
+		// Print move train message:
+		mPrinter.printMoveTrainMessage(train);
+
+		// Move the train:
+		mApplication.moveTrain(trainId);
+
+		// View the semaphore:
+		viewSemaphore(train.getCurrentBlock().getModule().getId(), train.getOrientation());
+	}
+	public void requestLeaveStation(String trainId)
+	{
+		// Get train:
+		Train train = mApplication.getTrain(trainId);
+
+		// Request to leave station:
+		boolean result = mApplication.requestLeaveStation(train);
+
+		// Print request to leave station message:
+		mPrinter.printRequestLeaveStation(train, result);
+	}
+
 	public void viewMap()
 	{
 		TrainLine trainLine = mApplication.getTrainLine();
@@ -58,18 +84,24 @@ class CommandLineInterface
 
 	public void run()
 	{
-		while(true)
-		{
-			
-		}
+		String train1 = "train1";
+
+		viewMap();
+		viewTrain(train1);
+
+		requestLeaveStation(train1);
+
+		moveTrain(train1);
+		viewTrain(train1);
+
+		moveTrain(train1);
+		viewTrain(train1);
 	}
 
 	public static void main(String[] args)
 	{
 		CommandLineInterface cli = new CommandLineInterface();
 
-		cli.viewMap();
-		cli.viewBlock("station1", "<Up>");
-		cli.viewTrain("train1");
+		cli.run();
 	}
 }
