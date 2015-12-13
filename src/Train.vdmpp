@@ -42,17 +42,17 @@ operations
 	post currentBlock = currentBlock~.getNextBlock(orientation) and -- New block is equal to old block's next block
 		not currentBlock.canEnter(orientation) and -- We cannot enter in the new block (New block is red)
 	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then -- Check if sempahore from the block we're exiting is ok
-	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Red>
+	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Red>)
 	  	else
-	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
+	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Yellow>)
 	  ) and
 	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() 
-	  			or currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getSensor() = <Busy> then -- We should put red if its a block next to a station, or a train is there
-	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Red>
+	  			or currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).isSensor(<Busy>) then -- We should put red if its a block next to a station, or a train is there
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Red>)
 	  	elseif currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then
-	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Yellow>)
 	  	else
-	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Green>
+	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).isColor(<Green>)
 	  );
 	  
 	public stopAction: () ==> ()
@@ -73,9 +73,9 @@ operations
 		else
 			return false;
 	)
-	pre status = <Stopped> and currentBlock.isInStation() and currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>
-	post if isPathClearedUntilNextStation() then currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Green>
-		else currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>;
+	pre status = <Stopped> and currentBlock.isInStation() and currentBlock.getNextBlock(orientation).getSemaphore(orientation).isColor(<Red>)
+	post if isPathClearedUntilNextStation() then currentBlock.getNextBlock(orientation).getSemaphore(orientation).isColor(<Green>)
+		else currentBlock.getNextBlock(orientation).getSemaphore(orientation).isColor(<Red>);
 	
 	-- Gets
 	pure public getCurrentBlock: () ==> Block
@@ -103,12 +103,12 @@ operations
 		dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
 		
 		-- Iterate the next blocks and check if we can make it to the next station without being stuck somewhere in between:
-		while (not nextBlock.getModule().getIsStation()) and nextBlock.getSemaphore(orientation).getSensor() = <Free> and nextBlock.getSemaphore(oppositeOrientation()).getSensor() = <Free> do
+		while (not nextBlock.getModule().getIsStation()) and nextBlock.getSemaphore(orientation).isSensor(<Free>) and nextBlock.getSemaphore(oppositeOrientation()).isSensor(<Free>) do
 			nextBlock := nextBlock.getNextBlock(orientation);
 		
 		-- If we got to the next station in the previous cycle, then the path is clear, but we have to check if it's busy
 		-- But in the station, we only want to check if the semaphore for our orientaton is on
-		return (nextBlock.getModule().getIsStation() and nextBlock.getSemaphore(orientation).getSensor() = <Free>);
+		return (nextBlock.getModule().getIsStation() and nextBlock.getSemaphore(orientation).isSensor(<Free>));
 	)
 	pre status = <Stopped> and currentBlock.isInStation(); -- We can only execute this function when we're stopped in a station
 	

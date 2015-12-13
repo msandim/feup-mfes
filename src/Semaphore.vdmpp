@@ -10,17 +10,14 @@ instance variables
 	private isSensorAvailable: bool := true;
 	
 operations
-	public pure getColor: () ==> Color
-	getColor() == return semaphoreStatus;
+	public pure isColor: (Color) ==> bool
+	isColor(color) == return semaphoreStatus = color and isSemaphoreAvailable;
 	
-	public pure getSensor: () ==> SensorStatus
-	getSensor() == return sensorStatus;
+	public pure getColorDirect: () ==> Color
+	getColorDirect() == return semaphoreStatus;
 	
-	public pure getIsAvailable: () ==> bool
-	getIsAvailable() == return isSemaphoreAvailable;
-	
-	public pure getIsSensorAvailable: () ==> bool
-	getIsSensorAvailable() == return isSensorAvailable;
+	public pure isSensor: (SensorStatus) ==> bool
+	isSensor(sensor) == return sensorStatus = sensor and isSensorAvailable;
 	
 	public setColor: (Color) ==> ()
 	setColor(color) == semaphoreStatus := color;

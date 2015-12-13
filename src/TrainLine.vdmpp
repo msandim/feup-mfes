@@ -73,7 +73,7 @@ operations
 		-- The line is now built:
 		isLineBuilt := true;
 	)
-	pre card dom modules >= 2 -- To close a circular track we have to have at least two modules in the track
+	pre isLineBuilt = false and card dom modules >= 2 -- To close a circular track we have to have at least two modules in the track
 	post modules(headModuleId).getDownModule() = modules(tailModuleId) and -- the first module must be linked to the last model
 		modules(tailModuleId).getUpModule() = modules(headModuleId); -- The last module must be linked to the first model
 	
@@ -91,7 +91,7 @@ operations
 	modules(moduleId).getIsStation() and -- We can only put new trains in stations
 	not exists t1 in set dom trains & trains(t1).getCurrentBlock().getModule() = modules(moduleId) -- The station must be empty
 	post id in set dom trains and
-		trains(id).getCurrentBlock().getSemaphore(orientation).getColor() = <Red> and trains(id).getCurrentBlock().getSemaphore(orientation).getSensor() = <Busy> and -- The block is occupied and busy
+		trains(id).getCurrentBlock().getSemaphore(orientation).isColor(<Red>) and trains(id).getCurrentBlock().getSemaphore(orientation).isSensor(<Busy>) and -- The block is occupied and busy
 		trains(id).getCurrentBlock().getModule() = modules(moduleId);
 	
 	-- Moves a train with a specific id
@@ -155,7 +155,7 @@ operations
 	public pure getBlockSemaphore: String * Train`Orientation ==> Semaphore`Color
 	getBlockSemaphore(idArg, orientationArg) ==
 	(
-		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg).getColor();
+		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg).getColorDirect();
 	);
 	
 	-- Gets
