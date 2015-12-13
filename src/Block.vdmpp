@@ -85,7 +85,7 @@ operations
 		-- Check the previous block to the block we're leaving:
 		-- If the previous-previous block is a station or if a train is there, then it must be red
 		if getPreviousBlock(trainOrientation).getPreviousBlock(trainOrientation).isInStation()
-				or getPreviousBlock(trainOrientation).getSemaphore(trainOrientation).isSensor(<Busy>) then
+				or getPreviousBlock(trainOrientation).getSemaphore(trainOrientation).getSensor() = <Busy> then
 			previousSemaphoreNextColor := <Red>
 		elseif getPreviousBlock(trainOrientation).isInStation() then -- If the previous block from the block we're leaving is a station, leave it yellow
 			previousSemaphoreNextColor := <Yellow>
@@ -100,9 +100,9 @@ operations
 	canEnter(orientationArg) ==
 		if orientationArg = <Up>
 		then
-			return upSemaphore.isColor(<Yellow>) or upSemaphore.isColor(<Green>)
+			return upSemaphore.getColor() <> <Red> and upSemaphore.isAvailable()
 		else
-			return downSemaphore.isColor(<Yellow>) or downSemaphore.isColor(<Green>);
+			return downSemaphore.getColor() <> <Red> and downSemaphore.isAvailable();
 	
 	pure public canEnterNextBlock: (Train`Orientation) ==> (bool)
 	canEnterNextBlock(orientation) == return getNextBlock(orientation).canEnter(orientation);
