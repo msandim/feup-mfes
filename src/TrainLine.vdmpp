@@ -91,7 +91,7 @@ operations
 	modules(moduleId).getIsStation() and -- We can only put new trains in stations
 	not exists t1 in set dom trains & trains(t1).getCurrentBlock().getModule() = modules(moduleId) -- The station must be empty
 	post id in set dom trains and
-		trains(id).getCurrentBlock().getSemaphore(orientation).isColor(<Red>) and trains(id).getCurrentBlock().getSemaphore(orientation).isSensor(<Busy>) and -- The block is occupied and busy
+		trains(id).getCurrentBlock().getSemaphore(orientation).getColor() = <Red> and trains(id).getCurrentBlock().getSemaphore(orientation).getSensor() = <Busy> and -- The block is occupied and busy
 		trains(id).getCurrentBlock().getModule() = modules(moduleId);
 	
 	-- Moves a train with a specific id
@@ -155,7 +155,7 @@ operations
 	public pure getBlockSemaphore: String * Train`Orientation ==> Semaphore`Color
 	getBlockSemaphore(idArg, orientationArg) ==
 	(
-		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg).getColorDirect();
+		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg).getColor();
 	);
 	
 	-- Gets
