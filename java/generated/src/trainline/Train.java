@@ -42,9 +42,19 @@ public class Train {
 
     public Boolean requestLeaveStation() {
         if (isPathClearedUntilNextStation()) {
-            currentBlock.getNextBlock(((Object) orientation))
-                        .setSemaphore(trainline.quotes.GreenQuote.getInstance(),
-                orientation);
+            if (Utils.equals(currentBlock.getNextBlock(((Object) orientation))
+                                             .getNextBlock(((Object) orientation))
+                                             .getSemaphore(((Object) orientation))
+                                             .getColor(),
+                        trainline.quotes.RedQuote.getInstance())) {
+                currentBlock.getNextBlock(((Object) orientation))
+                            .setSemaphore(trainline.quotes.YellowQuote.getInstance(),
+                    orientation);
+            } else {
+                currentBlock.getNextBlock(((Object) orientation))
+                            .setSemaphore(trainline.quotes.GreenQuote.getInstance(),
+                    orientation);
+            }
 
             return true;
         } else {
