@@ -1,9 +1,10 @@
 class SimpleModule is subclass of Module
 
 instance variables
-	private block: Block;
+	private block: Block; -- A simple module has one single block
 
 operations
+  -- Constructor
 	public SimpleModule: (TrainLine`String) * (TrainLine) ==> SimpleModule
 	SimpleModule(idArg, trainLineArg) ==
 	(
@@ -12,6 +13,7 @@ operations
 		return self;
 	);
 	
+	-- A simple module has one single block to be shared in both train orientations, so it ignores the train orientation
 	public pure getBlock: (Train`Orientation) ==> (Block)
 	getBlock(orientation) ==
 	(	

@@ -1,16 +1,20 @@
 class Module
 
 instance variables
-	protected id: TrainLine`String;
+	protected id: TrainLine`String; -- Identifier of this Module
 	protected upModule: Module; -- module this module will reach if going in the 'Up' direction
 	protected downModule: Module; -- module this module will reach if going in the 'Down' direction
 
 operations
 
+  -- Gets the block in a specific orientation
+  -- => In a SimpleModule, there is only one block to be shared by both Train Orientations
+  -- => In a StationModuel, there are two blocks to be used from trains in different Train Orientations
 	public pure getBlock: (Train`Orientation) ==> (Block)
 	getBlock(orientation) ==
 	is subclass responsibility;
 	
+	-- Gets the next block in a specific orientation
 	public pure getNextBlock: (Train`Orientation) ==> (Block)
 	getNextBlock(orientation) ==
 	(
@@ -21,6 +25,7 @@ operations
 			return downModule.getBlock(orientation);
 	);
 	
+	 -- Gets the previous block in a specific orientation
 	public pure getPreviousBlock: (Train`Orientation) ==> (Block)
 	getPreviousBlock(orientation) ==
 	(
@@ -31,19 +36,24 @@ operations
 			return downModule.getBlock(orientation);
 	);
 	
+	-- Gets the identifier of this module
 	public pure getId: () ==> TrainLine`String
 	getId() == return id;
 	
+	-- Checks if this module is a station or not
 	public pure getIsStation: () ==> bool
 	getIsStation() ==
 	is subclass responsibility;
 	
+	-- Gets the next module in the "Up" train orientation
 	public pure getUpModule: () ==> Module
 	getUpModule() == return upModule;
 	
+	-- Gets the previous module in the <Down> train orientation
 	public pure getDownModule: () ==> Module
 	getDownModule() == return downModule;
 	
+	-- Gets the next module, according to a specific orientation
 	pure public getNextModule: (Train`Orientation) ==> (Module)
 	getNextModule(orientation) ==
 	(
@@ -51,6 +61,7 @@ operations
 		then return upModule else return downModule;
 	);
 	
+	-- Gets the previous module, according to a specific orientation
 	pure public getPreviousModule: (Train`Orientation) ==> (Module)
 	getPreviousModule(orientation) ==
 	(
@@ -58,9 +69,11 @@ operations
 		then return upModule else return downModule;
 	);
 	
+	-- Sets the module in the <Up> train orientation
 	public setUpModule: (Module) ==> ()
 	setUpModule(upModuleArg) == upModule := upModuleArg;
 	
+	-- Sets the module in the <Down> train orientation
 	public setDownModule: (Module) ==> ()
 	setDownModule(downModuleArg) == downModule := downModuleArg;
 

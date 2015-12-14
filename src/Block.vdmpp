@@ -1,12 +1,10 @@
 class Block
 		
 instance variables
-	private module : Module;
-	private trainLine: TrainLine;
-	
-	private upSemaphore: Semaphore := new Semaphore();
-	private downSemaphore: Semaphore := new Semaphore();
-	private true_self: Block;
+	private module : Module; -- Module in which this Block is insired
+	private trainLine: TrainLine; -- Trainline in which this block is insired
+	private upSemaphore: Semaphore := new Semaphore(); -- Semaphore that controls the entries in the Up direction
+	private downSemaphore: Semaphore := new Semaphore(); -- Semaphore that controls the entries in the Down direction
 	
 operations
 
@@ -16,11 +14,10 @@ operations
 	(
 		module := moduleArg;
 		trainLine := trainLineArg;
-		true_self := self;
-		
 		return self;
 	);
 	
+	-- Makes the modifications in this block's semaphores as if a train is entering this block
 	public trainEnter: (Train`Orientation) ==> ()
 	trainEnter(trainOrientation) ==
 	(
@@ -31,6 +28,7 @@ operations
 			downSemaphore.setColorAndSensor(<Red>, <Busy>);
 	);
 	
+	-- Makes the modifications in this block's semaphores as if a train is exiting this block
 	public trainExit: (Train`Orientation) ==> ()
 	trainExit(trainOrientation) ==
 	(
@@ -60,11 +58,12 @@ operations
 			previousSemaphoreNextColor := <Yellow>
 		else
 			previousSemaphoreNextColor := <Green>;
-			
+		
+		-- Update the semalhore:
 		getModule().getPreviousModule(trainOrientation).getBlock(trainOrientation).setSemaphore(previousSemaphoreNextColor, trainOrientation);
 	);
 	
-	-- Methods
+	-- Checks if it's safe for a train to enter this block in this direction (orientation)
 	pure public canEnter: (Train`Orientation) ==> (bool)
 	canEnter(orientationArg) ==
 		if orientationArg = <Up>
@@ -73,10 +72,11 @@ operations
 		else
 			return downSemaphore.getColor() <> <Red> and downSemaphore.isAvailable();
 	
+	-- Checks if this block is insired in a station module
 	pure public isInStation: () ==> (bool)
 	isInStation() == return module.getIsStation();
 	
-	-- Gets
+	-- Gets the semaphore from this block, according to a certain orientation
 	pure public getSemaphore: (Train`Orientation) ==> (Semaphore)
 	getSemaphore(orientationArg) == 
 		if orientationArg = <Up>
@@ -84,19 +84,19 @@ operations
 			return upSemaphore else
 			return downSemaphore;
 	
-	--pure public getSensor: (Train`Orientation) ==> (Sensor)
-	--getSensor() == return sensor;
-	
+	-- Gets the module in which this block is insired
 	pure public getModule: () ==> (Module)
 	getModule() == return module;
 	
+	-- Gets the next block to this block, in a specified orientation
 	pure public getNextBlock: (Train`Orientation) ==> (Block)
 	getNextBlock(orientation) == return module.getNextBlock(orientation);
 	
+	-- Gets the previous block to this block, in a specified orientation
 	pure public getPreviousBlock: (Train`Orientation) ==> (Block)
 	getPreviousBlock(orientation) == return module.getPreviousBlock(orientation);
 	
-	-- Sets
+	-- Sets the value of the semaphore that controls the traffic coming from a specific orientation
 	public setSemaphore: (Semaphore`Color) * (Train`Orientation) ==> ()
 	setSemaphore(semaphoreArg, orientationArg) ==
 		if orientationArg = <Up>

@@ -29,7 +29,7 @@ instance variables
 	
 operations
 	
-	-- ** Adds a simple module (between 2 stations) to the line: **
+	-- Adds a simple module (between 2 stations) to the line:
 	public addSimpleModule: (String) ==> ()
 	addSimpleModule(id) ==
 	(
@@ -112,17 +112,15 @@ operations
 	requestLeaveStation(id) == trains(id).requestLeaveStation()
 	pre isLineBuilt = true and id in set dom trains;
 	
+	-- Changes the availability of a semaphore in a specific module and with a specific orientation
 	public changeSemaphoreAvailability: String * Train`Orientation * bool ==> ()
 	changeSemaphoreAvailability(moduleId, orientation, isAvailable) == modules(moduleId).getBlock(orientation).getSemaphore(orientation).setAvailability(isAvailable)
 	pre moduleId in set dom modules;
 	
+	-- Changes the availability of a sensor in a specific module and with a specific orientation
 	public changeSensorAvailability: String * Train`Orientation * bool ==> ()
 	changeSensorAvailability(moduleId, orientation, isAvailable) == modules(moduleId).getBlock(orientation).getSemaphore(orientation).setSensorAvailability(isAvailable)
 	pre moduleId in set dom modules;
-	
-	-- *****************************************************************
-	-- ****************** Private Auxiliar Methods *********************
-	-- *****************************************************************
 	
 	-- Adds a module to the station
 	private addModule: (String) * (Module) ==> ()
@@ -156,25 +154,30 @@ operations
 	  if card dom modules~ = 0
 	  	then (headModuleId = newModuleId and tailModuleId = newModuleId)
 	    else (tailModuleId = newModuleId and modules(tailModuleId~).getUpModule() = newModule and newModule.getDownModule() = modules(tailModuleId~));
-		
+	
+	-- Gets a train by its identifier
 	public pure getTrain: String ==> Train
 	getTrain(id) == return trains(id);
 	
+	-- Gets a module by its identifier
 	public pure getModule: String ==> Module
 	getModule(id) == return modules(id);
 	
+	-- Gets the semaphore in a block insired in a module with a specific orientation
 	public pure getBlockSemaphore: String * Train`Orientation ==> Semaphore`Color
 	getBlockSemaphore(idArg, orientationArg) ==
 	(
 		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg).getColor();
 	);
 	
+	-- Gets the map of trains
 	pure public getTrains: () ==> (map String to Train)
 	getTrains() == 
 	(
 		return trains;
 	);
 	
+	-- Gets the map of modules
 	pure public getModules: () ==> (map String to Module)
 	getModules() == 
 	(

@@ -1,18 +1,19 @@
 class Train
 types
+  -- Possible orientations for a train:
 	public Orientation = <Up> | <Down>;
+	-- Possible status for a train:
 	public MovementStatus = <Stopped> | <Moving>;
 values
 
 instance variables
-	private id: TrainLine`String;
+	private id: TrainLine`String; -- Train identifier
 	
-	private orientation: Orientation := <Up>;
-	private status: MovementStatus := <Stopped>;
-	private currentBlock: Block;
+	private orientation: Orientation := <Up>; -- Orientation of this train
+	private status: MovementStatus := <Stopped>; -- Current status of this train
+	private currentBlock: Block; -- Current block of the train
 	
 operations
-
 	-- Constructor
 	public Train: (TrainLine`String) * (Orientation) * (Block) ==> Train
 	Train(idArg, initialOrientation, initialBlock) ==
@@ -23,7 +24,7 @@ operations
 		return self;
 	);
 	
-	-- Move a train
+	-- Moves the train to the next block
 	public move: () ==> ()
 	move() ==
 	(
@@ -56,11 +57,12 @@ operations
 	  		getPreviousBlock().getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Green>
 	  );
 	  
+	-- Stops the train
 	public stopAction: () ==> ()
 	stopAction() == status := <Stopped>
 	pre status = <Moving>;
 	
-		
+	-- Requests the train to leave the current station
 	public requestLeaveStation: () ==> bool
 	requestLeaveStation() ==
 	(
@@ -79,26 +81,31 @@ operations
 					getNextBlock().getSemaphore(orientation).getColor() = <Green>
 		else getNextBlock().getSemaphore(orientation).getColor() = <Red>;
 	
-	-- Gets
+	-- Gets the current block in which the train is
 	pure public getCurrentBlock: () ==> Block
 	getCurrentBlock() == return currentBlock;
 	
+	-- Gets the next block the train is going to occupy according to his orientation
 	pure public getNextBlock: () ==> Block
 	getNextBlock() == return currentBlock.getNextBlock(orientation);
 	
+	-- Gets the previous block the train is going to occupy according to his orientation
 	pure public getPreviousBlock: () ==> Block
 	getPreviousBlock() == return currentBlock.getPreviousBlock(orientation);
 	
+	-- Gets the train's orientation
 	pure public getOrientation: () ==> Orientation
 	getOrientation() == return orientation;
 	
+	-- Checks if a train is stopped at the moment
 	pure public getIsStopped: () ==> bool
 	getIsStopped() == return status = <Stopped>;
 	
+	-- Gets the train's identifier
 	pure public getId: () ==> TrainLine`String
 	getId() == return id;
 	
-	-- Private methods:
+	-- Checks if the path from a specific station to the next one is clear, as in, no sensors is occupied during the way
 	private pure isPathClearedUntilNextStation: () ==> bool
 	isPathClearedUntilNextStation() ==
 	(
@@ -116,6 +123,7 @@ operations
 	)
 	pre status = <Stopped> and currentBlock.isInStation(); -- We can only execute this function when we're stopped in a station
 	
+	-- Returns the opposite orientation to the train's orientation
 	public pure oppositeOrientation: () ==> (Orientation)
 	oppositeOrientation() == 
 	(
