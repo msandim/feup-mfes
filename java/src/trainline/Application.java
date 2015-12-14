@@ -21,9 +21,13 @@ public class Application
 		mTrainLine.addSimpleModule("module3");
 		mTrainLine.addStationModule("station2");
 		mTrainLine.addSimpleModule("module4");
+		mTrainLine.addSimpleModule("module5");
+		mTrainLine.addStationModule("station3");
+		mTrainLine.addSimpleModule("module6");
 		mTrainLine.closeCircularTrack();
 
 		mTrainLine.addTrain("train1", UpQuote.getInstance(), "station1");
+		mTrainLine.addTrain("train2", UpQuote.getInstance(), "station2");
 	}
 
 	public void moveTrain(Train train)

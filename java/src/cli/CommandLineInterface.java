@@ -212,7 +212,10 @@ class CommandLineInterface
 	private boolean getBoolean()
 	{
 		while(!mScanner.hasNextBoolean())
+		{
 			Printer.println("Invalid boolean! Expecting true or false!");
+			mScanner.nextLine();
+		}
 
 		return mScanner.nextBoolean();
 	}
