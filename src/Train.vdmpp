@@ -64,19 +64,18 @@ operations
 	public requestLeaveStation: () ==> bool
 	requestLeaveStation() ==
 	(
-		-- See if we can exit ==> the set of blocks until the next station must be cleared:
-		if isPathClearedUntilNextStation()
+		-- See if we can exit ==> the set of blocks until the next station must be cleared and the next semaphore must work
+		if isPathClearedUntilNextStation() and getNextBlock().getSemaphore(orientation).isAvailable()
 		then
 		(	
-				getNextBlock().setSemaphore(<Green>, orientation);
-				
+			getNextBlock().setSemaphore(<Green>, orientation);	
 			return true;
 		)
 		else
 			return false;
 	)
 	pre status = <Stopped> and currentBlock.isInStation() and getNextBlock().getSemaphore(orientation).getColor() = <Red>
-	post if isPathClearedUntilNextStation() then
+	post if isPathClearedUntilNextStation() and getNextBlock().getSemaphore(orientation).isAvailable() then
 					getNextBlock().getSemaphore(orientation).getColor() = <Green>
 		else getNextBlock().getSemaphore(orientation).getColor() = <Red>;
 	

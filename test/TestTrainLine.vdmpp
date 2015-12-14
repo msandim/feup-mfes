@@ -144,6 +144,23 @@ operations
 		line.moveTrain("train2");
 		line.stopTrain("train2");
 		
+		-- In the station, if the next semaphore is not working, we cant advance
+		line.changeSemaphoreAvailability("module1", line.getTrain("train2").getOrientation(), false);
+		assertEqual(false, line.requestLeaveStation("train2"));
+		line.changeSemaphoreAvailability("module1", line.getTrain("train2").getOrientation(), true);
+		assertEqual(true, line.requestLeaveStation("train2"));
+		
+		-- If a sensor is not working, a semaphore is also not working
+		line.changeSensorAvailability("module7", line.getTrain("train2").getOrientation(), false);
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.stopTrain("train2");
+		
+		assertEqual(false, line.requestLeaveStation("train2"));
+		line.changeSensorAvailability("module7", line.getTrain("train2").getOrientation(), true);
+		assertEqual(true, line.requestLeaveStation("train2"));
+		
 		IO`println("Passed deactivation of semaphores and sensors test");
 	);
 	

@@ -96,7 +96,6 @@ operations
 		trainLine.closeCircularTrack();
 		
 		trainLine.addTrain("train2", <Down>, "station2");
-		trainLine.addTrain("train3", <Down>, "station3");
 		
 		return trainLine;
 	);

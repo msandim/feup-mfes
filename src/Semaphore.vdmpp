@@ -17,7 +17,7 @@ operations
 	getColor() == return semaphoreStatus;
 	
 	public pure isAvailable: () ==> bool
-	isAvailable() == return semaphoreAvailable;
+	isAvailable() == return semaphoreAvailable and sensorAvailable;
 	
 	public pure getSensor: () ==> SensorStatus
 	getSensor() == return sensorStatus;
@@ -33,9 +33,6 @@ operations
 	
 	public setColor: (Color) ==> ()
 	setColor(color) == semaphoreStatus := color;
-	
-	--public setSensor: (SensorStatus) ==> ()
-	--setSensor(status) == sensorStatus := status;
 	
 	public setColorAndSensor: Color * SensorStatus ==> ()
 	setColorAndSensor(color, sensor) ==

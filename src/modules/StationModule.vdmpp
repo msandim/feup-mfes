@@ -18,13 +18,6 @@ operations
 		return self;
 	);
 	
-	public pure canEnter: (Train`Orientation) ==> (bool)
-	canEnter(orientation) ==
-	(
-		if orientation = <Up>
-		then return upBlock.canEnter(orientation) else return downBlock.canEnter(orientation);
-	);
-	
 	public pure getBlock: (Train`Orientation) ==> (Block)
 	getBlock(orientation) ==
 	(	
