@@ -1,7 +1,4 @@
 class StationModule is subclass of Module
-types
-
-values
 
 instance variables
 	private upBlock: Block;
@@ -28,9 +25,5 @@ operations
 	
 	public pure getIsStation: () ==> bool
 	getIsStation() == return true;
-
-functions
-
-traces
 
 end StationModule

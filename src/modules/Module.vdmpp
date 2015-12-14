@@ -1,7 +1,4 @@
 class Module
-types
-		
-values
 
 instance variables
 	protected id: TrainLine`String;
@@ -66,9 +63,5 @@ operations
 	
 	public setDownModule: (Module) ==> ()
 	setDownModule(downModuleArg) == downModule := downModuleArg;
-
-functions
-
-traces
 
 end Module
