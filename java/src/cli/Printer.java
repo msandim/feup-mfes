@@ -50,9 +50,11 @@ public class Printer
 		print("\n");
 	}
 
-	public void printBlock(String moduleId, Object orientation, Block block)
+	public void printBlock(String moduleId, Object orientation)
 	{
-		print("Block:");
+		Block block = mApplication.getBlock(moduleId, orientation);
+
+		print("Block:\n");
 
 		print("\tModuleId: ");
 		print(moduleId);
@@ -80,6 +82,20 @@ public class Printer
 		print(train.getIsStopped().toString());
 		print("\n");
 	}
+	public void printTrain(String trainId)
+	{
+		// Get train:
+		Train train = mApplication.getTrain(trainId);
+		if(train == null)
+		{
+			Printer.println("Train doesn't exist!");
+			return;
+		}
+
+		// Print info:
+		printTrain(train);
+	}
+
 	public void printSemaphore(Semaphore semaphore)
 	{
 		print("Semaphore:\n");
@@ -100,7 +116,21 @@ public class Printer
 		print(semaphore.isSensorAvailable().toString());
 		print("\n");
 	}
-	public void printList(List<String> list)
+	public void printSemaphore(String moduleId, Object orientation)
+	{
+		// Get semaphore:
+		Semaphore semaphore = mApplication.getSemaphore(moduleId, orientation);
+		if(semaphore == null)
+		{
+			println("Semaphore doesn't exist!");
+			return;
+		}
+
+		// Print info:
+		printSemaphore(semaphore);
+	}
+
+	public static void printList(List<String> list)
 	{
 		if(list.isEmpty())
 			return;
@@ -114,9 +144,12 @@ public class Printer
 
 		print("\n");
 	}
-
-	private void print(String message)
+	public static void print(String message)
 	{
 		System.out.print(message);
+	}
+	public static void println(String message)
+	{
+		System.out.println(message);
 	}
 }
