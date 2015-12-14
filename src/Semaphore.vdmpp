@@ -1,14 +1,15 @@
 class Semaphore
 types
-	public Color = <Red> | <Yellow> | <Green>;
-	public SensorStatus = <Free> | <Busy>;
+	public Color = <Red> | <Yellow> | <Green>; -- Possible state colors for the Semaphore
+	public SensorStatus = <Free> | <Busy>; -- Possible status for the Sensor
 	
 instance variables
-	private semaphoreStatus: Color := <Green>;
-	private sensorStatus: SensorStatus := <Free>;
-	private semaphoreAvailable: bool := true;
-	private sensorAvailable: bool := true;
+	private semaphoreStatus: Color := <Green>; -- The current color of the semaphore
+	private sensorStatus: SensorStatus := <Free>; -- The current status for the sensor
+	private semaphoreAvailable: bool := true; -- Flag that indicates if a semaphore is available
+	private sensorAvailable: bool := true; -- Flag that indicates if a sensor is available
 	
+	-- If the current sensor is busy, then the semaphore should always be red
 	inv sensorStatus = <Busy> => semaphoreStatus = <Red>;
 	
 operations

@@ -1,8 +1,6 @@
 class TestTrainLine is subclass of TestCase
 
-operations  
-
-	-- Note: Requirements R1-R7 are not tested, since they are related to structure
+operations
 	
 	-- Tests requirement R1
 	public testCircularRailway: () ==> ()
@@ -31,7 +29,7 @@ operations
 		IO`println("Passed test circular railway test");
 	);
 	
-	-- Tests requirement R3 and R4
+	-- Tests requirements R3 and R4
 	public testStationLineUp: () ==> ()
 	testStationLineUp() ==
 	(
@@ -55,7 +53,7 @@ operations
 		line.moveTrain("train1");
 		line.moveTrain("train1");
 		
-		line.stopTrain("train1"); -- Comment in order to pass ==> we must call stopTrain before we ask for permition to leave
+		line.stopTrain("train1"); -- Uncomment in order to pass ==> we must call stopTrain before we ask for permition to leave
 		
 		assertEqual(true, line.requestLeaveStation("train1"));
 		
@@ -81,7 +79,7 @@ operations
 		IO`println("Passed correct of orientation of a train in a station");
 	);
 	
-	-- Tests requirements R10 and R11 (related to permission to leave the station)
+	-- Tests requirements R10 and R11 (only tests the sensor busy situation)
 	public testRequestToLeaveStation: () ==> ()
 	testRequestToLeaveStation() == 
 	(
@@ -96,7 +94,7 @@ operations
 		IO`println("Passed request to leave station test");
 	);
 	
-	-- Testar paragem de emergência
+	-- Test emergency stops (R11 - only busy situation - and R15) and movement (R14)
 	public testEmergencyStop: () ==> ()
 	testEmergencyStop() ==
 	(
@@ -119,6 +117,7 @@ operations
 		IO`println("Passed emergency stop test");
 	);
 	
+	-- Tests requirements R11 (situation where sensors are not available), R17, R18
 	public testDeactivationOfSemaphoresandSensors: () ==> ()
 	testDeactivationOfSemaphoresandSensors() ==
 	(
@@ -133,13 +132,13 @@ operations
 		line.changeSemaphoreAvailability("module2", line.getTrain("train2").getOrientation(), false);
 		line.moveTrain("train2");
 		line.moveTrain("train2");
-		--line.moveTrain("train2"); -- *** Comment to pass ***
+		--line.moveTrain("train2"); -- *** Comment to pass => we cannot move ***
 		
 		line.changeSemaphoreAvailability("module2", line.getTrain("train2").getOrientation(), true);
 		line.moveTrain("train2");
 		
 		line.changeSemaphoreAvailability("station1", line.getTrain("train2").getOrientation(), false);
-		--line.moveTrain("train2"); -- *** Comment to pass ***
+		--line.moveTrain("train2"); -- *** Comment to pass => we cannot move ***
 		line.changeSemaphoreAvailability("station1", line.getTrain("train2").getOrientation(), true);
 		line.moveTrain("train2");
 		line.stopTrain("train2");
@@ -257,7 +256,7 @@ operations
 		IO`println("Passed simple movement test");
 	);
 	
-	-- Tests requirements R11 and R16 (related to permission to leave the station)
+	-- Tests requirements R11 (related to permission to leave the station)
 	public testMultiTrain: () ==> ()
 	testMultiTrain() ==
 	(

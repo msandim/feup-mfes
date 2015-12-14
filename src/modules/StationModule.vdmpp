@@ -1,14 +1,14 @@
 class StationModule is subclass of Module
 
 instance variables
-	private upBlock: Block;
+	private upBlock: Block; -- A station module has 2 possible blocks for a train to be one, depending on its direction
 	private downBlock: Block; 
 	
 operations
+  -- Constructor
 	public StationModule: (TrainLine`String) * (TrainLine) ==> StationModule
 	StationModule(idArg, trainLineArg) ==
 	(
-		-- Instantiate the blocks of this StationModule:
 		id := idArg;
 		upBlock := new Block(self, trainLineArg);
 		downBlock := new Block(self, trainLineArg);
