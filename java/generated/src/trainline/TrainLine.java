@@ -84,6 +84,18 @@ public class TrainLine {
         return ((Train) Utils.get(trains, id)).requestLeaveStation();
     }
 
+    public void changeSemaphoreAvailability(final String moduleId,
+        final Object orientation, final Boolean isAvailable) {
+        ((Module) Utils.get(modules, moduleId)).getBlock(((Object) orientation))
+         .getSemaphore(((Object) orientation)).setAvailability(isAvailable);
+    }
+
+    public void changeSensorAvailability(final String moduleId,
+        final Object orientation, final Boolean isAvailable) {
+        ((Module) Utils.get(modules, moduleId)).getBlock(((Object) orientation))
+         .getSemaphore(((Object) orientation)).setSensorAvailability(isAvailable);
+    }
+
     private void addModule(final String newModuleId, final Module newModule) {
         if (MapUtil.dom(Utils.copy(modules)).size() > 0L) {
             Module tailModule = ((Module) Utils.get(modules, tailModuleId));
@@ -92,10 +104,10 @@ public class TrainLine {
             newModule.setDownModule(tailModule);
             tailModuleId = newModuleId;
         } else {
-            String atomicTmp_1 = newModuleId;
-            String atomicTmp_2 = newModuleId;
-            headModuleId = atomicTmp_1;
-            tailModuleId = atomicTmp_2;
+            String atomicTmp_3 = newModuleId;
+            String atomicTmp_4 = newModuleId;
+            headModuleId = atomicTmp_3;
+            tailModuleId = atomicTmp_4;
         }
 
         modules = MapUtil.munion(Utils.copy(modules),
@@ -116,12 +128,12 @@ public class TrainLine {
                    .getSemaphore(((Object) orientationArg)).getColor();
     }
 
-    public VDMMap getModules() {
-        return Utils.copy(modules);
-    }
-
     public VDMMap getTrains() {
         return Utils.copy(trains);
+    }
+
+    public VDMMap getModules() {
+        return Utils.copy(modules);
     }
 
     public String toString() {

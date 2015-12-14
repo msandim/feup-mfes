@@ -32,11 +32,11 @@ public class Block {
     public void trainEnter(final Object trainOrientation) {
         if (Utils.equals(trainOrientation,
                     trainline.quotes.UpQuote.getInstance())) {
-            upSemaphore.setColor(trainline.quotes.RedQuote.getInstance());
-            upSemaphore.setSensor(trainline.quotes.BusyQuote.getInstance());
+            upSemaphore.setColorAndSensor(trainline.quotes.RedQuote.getInstance(),
+                trainline.quotes.BusyQuote.getInstance());
         } else {
-            downSemaphore.setColor(trainline.quotes.RedQuote.getInstance());
-            downSemaphore.setSensor(trainline.quotes.BusyQuote.getInstance());
+            downSemaphore.setColorAndSensor(trainline.quotes.RedQuote.getInstance(),
+                trainline.quotes.BusyQuote.getInstance());
         }
     }
 
@@ -53,11 +53,11 @@ public class Block {
 
         if (Utils.equals(trainOrientation,
                     trainline.quotes.UpQuote.getInstance())) {
-            upSemaphore.setColor(semaphoreNextColor);
-            upSemaphore.setSensor(trainline.quotes.FreeQuote.getInstance());
+            upSemaphore.setColorAndSensor(semaphoreNextColor,
+                trainline.quotes.FreeQuote.getInstance());
         } else {
-            downSemaphore.setColor(semaphoreNextColor);
-            downSemaphore.setSensor(trainline.quotes.FreeQuote.getInstance());
+            downSemaphore.setColorAndSensor(semaphoreNextColor,
+                trainline.quotes.FreeQuote.getInstance());
         }
 
         Boolean orResult_1 = false;
@@ -110,11 +110,6 @@ public class Block {
 
             return andResult_2;
         }
-    }
-
-    public Boolean canEnterNextBlock(final Object orientation) {
-        return getNextBlock(((Object) orientation))
-                   .canEnter(((Object) orientation));
     }
 
     public Boolean isInStation() {

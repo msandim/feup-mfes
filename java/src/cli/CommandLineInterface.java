@@ -34,13 +34,53 @@ class CommandLineInterface
 		mMainMenu.addEntry(new MenuEntry("View list of trains", this::viewTrains));
 		mMainMenu.addEntry(new MenuEntry("View a train state", this::viewTrain));
 		mMainMenu.addEntry(new MenuEntry("View a semaphore/sensor state", this::viewSemaphore));
+		mMainMenu.addEntry(new MenuEntry("View a block", this::viewBlock));
 		mMainMenu.addEntry(new MenuEntry("Select a train", this::selectTrain));
+		mMainMenu.addEntry(new MenuEntry("Change semaphore availability", this::changeSemaphoreAvailability));
+		mMainMenu.addEntry(new MenuEntry("Change sensor availability", this::changeSensorAvailability));
 
 		mTrainMenu = new Menu("----- Train Menu -----", "Select an option:");
 		mTrainMenu.addEntry(new MenuEntry("View state", this::viewCurrentTrain));
 		mTrainMenu.addEntry(new MenuEntry("Move", this::moveCurrentTrain));
 		mTrainMenu.addEntry(new MenuEntry("Stop", this::stopTrain));
 		mTrainMenu.addEntry(new MenuEntry("Request to leave station", this::requestLeaveStation));
+	}
+
+	public void changeSemaphoreAvailability()
+	{
+		String moduleId = getModuleId();
+		Object orientation = getOrientation();
+		if(orientation == null)
+			return;
+		boolean value = getAvailability();
+
+		Semaphore semaphore = mApplication.getSemaphore(moduleId, orientation);
+		if(semaphore == null)
+		{
+			Printer.println("Module doesn't exist!");
+			return;
+		}
+
+		semaphore.setAvailability(value);
+		mPrinter.printChangeSemaphoreAvailability(moduleId, orientation, value);
+	}
+	public void changeSensorAvailability()
+	{
+		String moduleId = getModuleId();
+		Object orientation = getOrientation();
+		if(orientation == null)
+			return;
+		boolean value = getAvailability();
+
+		Semaphore semaphore = mApplication.getSemaphore(moduleId, orientation);
+		if(semaphore == null)
+		{
+			Printer.println("Module doesn't exist!");
+			return;
+		}
+
+		semaphore.setSensorAvailability(value);
+		mPrinter.printChangeSensorAvailability(moduleId, orientation, value);
 	}
 
 	public void moveCurrentTrain()
@@ -55,7 +95,7 @@ class CommandLineInterface
 		mApplication.moveTrain(train);
 
 		// Print info:
-		mPrinter.printSemaphore(train.getNextBlock().getModule().getId(), train.getOrientation());
+		mPrinter.printSemaphore(train.getNextBlock().getModule().getId(), train.getOrientation(), true);
 	}
 	public void requestLeaveStation()
 	{
@@ -107,31 +147,28 @@ class CommandLineInterface
 	}
 	public void viewBlock()
 	{
-		Printer.print("Module ID: ");
-		String moduleId = getInput();
+		String moduleId = getModuleId();
 
 		Object orientation = getOrientation();
 		if(orientation == null)
 			return;
 
-		mPrinter.printBlock(moduleId, orientation);
+		mPrinter.printBlock(moduleId, orientation, false);
 	}
 	public void viewSemaphore()
 	{
-		Printer.print("Module ID: ");
-		String moduleId = getInput();
+		String moduleId = getModuleId();
 
 		Object orientation = getOrientation();
 		if(orientation == null)
 			return;
 
 		// Print info:
-		mPrinter.printSemaphore(moduleId, orientation);
+		mPrinter.printSemaphore(moduleId, orientation, false);
 	}
 	public void viewTrain()
 	{
-		Printer.print("Train ID: ");
-		String trainId = getInput();
+		String trainId = getTrainId();
 
 		mPrinter.printTrain(trainId);
 	}
@@ -139,7 +176,8 @@ class CommandLineInterface
 	{
 		Train currentTrain = mApplication.getCurrentTrain();
 		mPrinter.printTrain(currentTrain);
-		mPrinter.printBlock(currentTrain.getCurrentBlock().getModule().getId(), currentTrain.getOrientation());
+		mPrinter.printBlock(currentTrain.getCurrentBlock().getModule().getId(), currentTrain.getOrientation(), false);
+		mPrinter.printBlock(currentTrain.getNextBlock().getModule().getId(), currentTrain.getOrientation(), true);
 	}
 
 	private void selectTrain()
@@ -147,8 +185,7 @@ class CommandLineInterface
 		// Print list of trains:
 		viewTrains();
 
-		Printer.print("Train ID: ");
-		String trainId = getInput();
+		String trainId = getTrainId();
 
 		Train train = mApplication.getTrain(trainId);
 		if(train == null)
@@ -172,6 +209,18 @@ class CommandLineInterface
 
 		return input;
 	}
+	private boolean getBoolean()
+	{
+		while(!mScanner.hasNextBoolean())
+			Printer.println("Invalid boolean! Expecting true or false!");
+
+		return mScanner.nextBoolean();
+	}
+	private String getModuleId()
+	{
+		Printer.print("Module ID: ");
+		return getInput();
+	}
 	private Object getOrientation()
 	{
 		Printer.print("Orientation (up, down): ");
@@ -185,20 +234,15 @@ class CommandLineInterface
 
 		return orientation;
 	}
-
-	public void processCommand(int command)
+	private String getTrainId()
 	{
-
-		/*String train1 = "train1";
-
-		viewTrainLine();
-		viewTrain(train1);
-
-		requestLeaveStation(train1);
-		moveTrain(train1);
-		moveTrain(train1);
-		moveTrain(train1);
-		stopTrain(train1);*/
+		Printer.print("Train ID: ");
+		return getInput();
+	}
+	private boolean getAvailability()
+	{
+		Printer.print("Is available: ");
+		return getBoolean();
 	}
 
 	public void run()
