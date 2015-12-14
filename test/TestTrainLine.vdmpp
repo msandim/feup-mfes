@@ -25,6 +25,9 @@ operations
 		assertEqual(line.getModule("module1"), line.getModule("station2").getUpModule());
 		assertEqual(line.getModule("station2"), line.getModule("module1").getDownModule());
 		
+		assertEqual(line.getTrains(), line.getTrains());
+		assertEqual(line.getModules(), line.getModules());
+		
 		IO`println("Passed test circular railway test");
 	);
 	
@@ -44,6 +47,7 @@ operations
 	testTrainMustStopAtStation() ==
 	(
 		dcl line: TrainLine := TrainLineBuilder`buildMap1();
+		assertEqual("train1", line.getTrain("train1").getId());
 		
 		assertEqual(true, line.requestLeaveStation("train1"));
 		line.moveTrain("train1");

@@ -68,9 +68,6 @@ operations
 		if isPathClearedUntilNextStation()
 		then
 		(	
-			if (getNextBlock().getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>) then
-				getNextBlock().setSemaphore(<Yellow>, orientation)
-			else
 				getNextBlock().setSemaphore(<Green>, orientation);
 				
 			return true;
@@ -80,10 +77,7 @@ operations
 	)
 	pre status = <Stopped> and currentBlock.isInStation() and getNextBlock().getSemaphore(orientation).getColor() = <Red>
 	post if isPathClearedUntilNextStation() then
-					(if getNextBlock().getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red> then
-							getNextBlock().getSemaphore(orientation).getColor() = <Yellow>
-					else
-							getNextBlock().getSemaphore(orientation).getColor() = <Green>)
+					getNextBlock().getSemaphore(orientation).getColor() = <Green>
 		else getNextBlock().getSemaphore(orientation).getColor() = <Red>;
 	
 	-- Gets
