@@ -143,6 +143,26 @@ operations
 		IO`println("Passed multi train test");
 	);
 	
+	public testOneTrain: () ==> ()
+	testOneTrain() ==
+	(
+		dcl trainLine: TrainLine := new TrainLine(); 
+	
+		trainLine.addSimpleModule("module1");
+		trainLine.addSimpleModule("station1");
+		trainLine.addSimpleModule("module2");
+		trainLine.addSimpleModule("module3");
+		trainLine.addSimpleModule("station2");
+		trainLine.addSimpleModule("module4");
+		trainLine.closeCircularTrack();
+
+		trainLine.addTrain("train1", <Up>, "station1");
+		
+		assertEqual(true, trainLine.requestLeaveStation("train1"));
+		
+		IO`println("Passed One Train test");
+	);
+	
   public testAll: () ==> ()
   testAll() ==
   (
@@ -150,6 +170,7 @@ operations
   	testSimpleMovement();
   	testMultiTrain();
   	testOnlyOneTrainBetweenTwoTracks();
+  	testOneTrain();
   );
   
 end TestTrainLine

@@ -5,6 +5,7 @@ import trainline.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 class CommandLineInterface
@@ -29,10 +30,10 @@ class CommandLineInterface
 		mPrinter.printMoveTrainMessage(train);
 
 		// Move the train:
-		mApplication.moveTrain(trainId);
+		mApplication.moveTrain(train);
 
 		// View the semaphore:
-		viewSemaphore(train.getCurrentBlock().getModule().getId(), train.getOrientation());
+		viewSemaphore(train.getNextBlock().getModule().getId(), train.getOrientation());
 	}
 	public void requestLeaveStation(String trainId)
 	{
@@ -44,6 +45,17 @@ class CommandLineInterface
 
 		// Print request to leave station message:
 		mPrinter.printRequestLeaveStation(train, result);
+	}
+	public void stopTrain(String trainId)
+	{
+		// Get train:
+		Train train = mApplication.getTrain(trainId);
+
+		// Print stop train message:
+		mPrinter.printStopTrain(train);
+
+		// Stop the train:
+		mApplication.stopTrain(train);
 	}
 
 	public void viewMap()
@@ -90,12 +102,10 @@ class CommandLineInterface
 		viewTrain(train1);
 
 		requestLeaveStation(train1);
-
 		moveTrain(train1);
-		viewTrain(train1);
-
 		moveTrain(train1);
-		viewTrain(train1);
+		moveTrain(train1);
+		stopTrain(train1);
 	}
 
 	public static void main(String[] args)

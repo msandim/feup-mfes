@@ -1,5 +1,7 @@
 package trainline;
 
+import trainline.quotes.UpQuote;
+
 public class Application
 {
 	private TrainLine mTrainLine;
@@ -13,28 +15,24 @@ public class Application
 	{
 		mTrainLine = new TrainLine();
 		mTrainLine.addSimpleModule("module1");
-		mTrainLine.addSimpleModule("station1");
+		mTrainLine.addStationModule("station1");
 		mTrainLine.addSimpleModule("module2");
-		mTrainLine.addSimpleModule("station2");
+		mTrainLine.addSimpleModule("module3");
+		mTrainLine.addStationModule("station2");
+		mTrainLine.addSimpleModule("module4");
 		mTrainLine.closeCircularTrack();
 
-		mTrainLine.addTrain("train1", "<Up>", "station1");
+		mTrainLine.addTrain("train1", UpQuote.getInstance(), "station1");
 	}
 
-	public void moveTrain(String trainId)
+	public void moveTrain(Train train)
 	{
-		// Get train:
-		Train train = getTrain(trainId);
-
 		// Move train:
 		train.move();
 	}
 
-	public void stopTrain(String trainId)
+	public void stopTrain(Train train)
 	{
-		// Get train:
-		Train train = getTrain(trainId);
-
 		// Stop train:
 		train.stopAction();
 	}

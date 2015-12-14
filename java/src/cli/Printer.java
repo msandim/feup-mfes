@@ -28,7 +28,9 @@ public class Printer
 	}
 	public void printRequestLeaveStation(Train train, boolean result)
 	{
-		print("Requesting to leave Station ");
+		print("Train ");
+		print(train.getId());
+		print(" requesting to leave Station ");
 		print(train.getCurrentBlock().getModule().getId());
 		print("\n");
 
@@ -37,6 +39,14 @@ public class Printer
 		else
 			print("Request denied!");
 
+		print("\n");
+	}
+	public void printStopTrain(Train train)
+	{
+		print("Train ");
+		print(train.getId());
+		print(" stopping at Module ");
+		print(train.getCurrentBlock().getModule().getId());
 		print("\n");
 	}
 
