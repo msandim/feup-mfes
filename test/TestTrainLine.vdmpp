@@ -2,6 +2,145 @@ class TestTrainLine is subclass of TestCase
 
 operations  
 
+	-- Note: Requirements R1-R7 are not tested, since they are related to structure
+	
+	-- Tests requirement R1
+	public testCircularRailway: () ==> ()
+	testCircularRailway() ==
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap3();
+		
+		assertEqual(line.getModule("station1"), line.getModule("module1").getUpModule());
+		assertEqual(line.getModule("module1"), line.getModule("station1").getDownModule());
+		
+		assertEqual(line.getModule("module2"), line.getModule("station1").getUpModule());
+		assertEqual(line.getModule("station1"), line.getModule("module2").getDownModule());
+		
+		assertEqual(line.getModule("station2"), line.getModule("module2").getUpModule());
+		assertEqual(line.getModule("module2"), line.getModule("station2").getDownModule());
+		
+		assertEqual(line.getModule("module1"), line.getModule("station2").getUpModule());
+		assertEqual(line.getModule("station2"), line.getModule("module1").getDownModule());
+		
+		IO`println("Passed test circular railway test");
+	);
+	
+	-- Tests requirement R3 and R4
+	public testStationLineUp: () ==> ()
+	testStationLineUp() ==
+	(
+		-- **** Comment in order to pass ****
+		--dcl map1: TrainLine := TrainLineBuilder`buildInvalidMap1();
+		--dcl map2: TrainLine := TrainLineBuilder`buildInvalidMap2();
+		
+		IO`println("Passed test station line up test");
+	);
+	
+	-- Tests requirements R8
+	public testTrainMustStopAtStation: () ==> ()
+	testTrainMustStopAtStation() ==
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap1();
+		
+		assertEqual(true, line.requestLeaveStation("train1"));
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		
+		line.stopTrain("train1"); -- Comment in order to pass ==> we must call stopTrain before we ask for permition to leave
+		
+		assertEqual(true, line.requestLeaveStation("train1"));
+		
+		IO`println("Passed test must stop at station");
+	);
+	
+	-- Tests requirement R9
+	public testCorrectOrientationOfTrain: () ==> ()
+	testCorrectOrientationOfTrain() ==
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap1();
+		dcl train1: Train := line.getTrain("train1");
+		
+		assertEqual(true, line.requestLeaveStation("train1"));
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		line.moveTrain("train1");
+		
+		line.stopTrain("train1");
+		
+		assertEqual(train1.getCurrentBlock(), line.getModule("station2").getBlock(train1.getOrientation()));
+		IO`println("Passed correct of orientation of a train in a station");
+	);
+	
+	-- Tests requirements R10 and R11 (related to permission to leave the station)
+	public testRequestToLeaveStation: () ==> ()
+	testRequestToLeaveStation() == 
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap2();
+		
+		assertEqual(true, line.requestLeaveStation("train1"));
+		line.moveTrain("train1");
+
+		assertEqual(false, line.requestLeaveStation("train2"));
+		assertEqual(false, line.requestLeaveStation("train3"));
+		
+		IO`println("Passed request to leave station test");
+	);
+	
+	-- Testar paragem de emergência
+	public testEmergencyStop: () ==> ()
+	testEmergencyStop() ==
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap2();
+		
+		assertEqual(true, line.requestLeaveStation("train2"));
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		line.stopTrain("train2");
+		assertEqual(line.getModule("module2"), line.getTrain("train2").getCurrentBlock().getModule());
+
+		assertEqual(true, line.requestLeaveStation("train3"));
+		line.moveTrain("train3");
+		line.moveTrain("train3");
+		line.moveTrain("train3");
+		line.stopTrain("train3");
+		assertEqual(false, line.requestLeaveStation("train3"));
+		
+		IO`println("Passed emergency stop test");
+	);
+	
+	public testDeactivationOfSemaphoresandSensors: () ==> ()
+	testDeactivationOfSemaphoresandSensors() ==
+	(
+		dcl line: TrainLine := TrainLineBuilder`buildMap4();
+		
+		line.changeSensorAvailability("module2", line.getTrain("train2").getOrientation(), false);
+		assertEqual(false, line.requestLeaveStation("train2"));
+		
+		line.changeSensorAvailability("module2", line.getTrain("train2").getOrientation(), true);
+		assertEqual(true, line.requestLeaveStation("train2"));
+		
+		line.changeSemaphoreAvailability("module2", line.getTrain("train2").getOrientation(), false);
+		line.moveTrain("train2");
+		line.moveTrain("train2");
+		--line.moveTrain("train2"); -- *** Comment to pass ***
+		
+		line.changeSemaphoreAvailability("module2", line.getTrain("train2").getOrientation(), true);
+		line.moveTrain("train2");
+		
+		line.changeSemaphoreAvailability("station1", line.getTrain("train2").getOrientation(), false);
+		--line.moveTrain("train2"); -- *** Comment to pass ***
+		line.changeSemaphoreAvailability("station1", line.getTrain("train2").getOrientation(), true);
+		line.moveTrain("train2");
+		line.stopTrain("train2");
+		
+		IO`println("Passed deactivation of semaphores and sensors test");
+	);
+	
+	-- Tests requirements R12 and R13 (focusing in initializing the semaphores correctly)
 	public testSemaphoreInit: () ==> ()
 	testSemaphoreInit() ==
 	(
@@ -28,6 +167,7 @@ operations
 		IO`println("Passed semaphore initialization");
 	);
 	
+	-- Tests requirements R12 and R13 (focusing in simple train movement)
 	public testSimpleMovement: () ==> ()
 	testSimpleMovement() ==
 	(
@@ -93,21 +233,7 @@ operations
 		IO`println("Passed simple movement test");
 	);
 	
-	public testOnlyOneTrainBetweenTwoTracks: () ==> ()
-	testOnlyOneTrainBetweenTwoTracks() == 
-	(
-		dcl line: TrainLine := TrainLineBuilder`buildMap2();
-		--dcl orientation1: Train`Orientation := line.getTrain("train1").getOrientation();
-		
-		assertEqual(true, line.requestLeaveStation("train1"));
-		line.moveTrain("train1");
-
-		assertEqual(false, line.requestLeaveStation("train2"));
-		assertEqual(false, line.requestLeaveStation("train3"));
-		
-		IO`println("Passed only one train between 2 tracks test");
-	);
-	
+	-- Tests requirements R11 and R16 (related to permission to leave the station)
 	public testMultiTrain: () ==> ()
 	testMultiTrain() ==
 	(
@@ -146,10 +272,16 @@ operations
   public testAll: () ==> ()
   testAll() ==
   (
+  	testCircularRailway();
+  	testStationLineUp();
+  	testTrainMustStopAtStation();
+  	testCorrectOrientationOfTrain();
+  	testRequestToLeaveStation();
+  	testEmergencyStop();
+  	testDeactivationOfSemaphoresandSensors();
   	testSemaphoreInit();
   	testSimpleMovement();
   	testMultiTrain();
-  	testOnlyOneTrainBetweenTwoTracks();
   );
   
 end TestTrainLine

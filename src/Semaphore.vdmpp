@@ -25,6 +25,12 @@ operations
 	public pure isSensorAvailable: () ==> bool
 	isSensorAvailable() == return sensorAvailable;
 	
+	public setAvailability: bool ==> ()
+	setAvailability(availability) == semaphoreAvailable := availability;
+	
+	public setSensorAvailability: bool ==> ()
+	setSensorAvailability(availability) == sensorAvailable := availability;
+	
 	public setColor: (Color) ==> ()
 	setColor(color) == semaphoreStatus := color;
 	

@@ -37,7 +37,7 @@ operations
 		trainLine := trainLineArg;
 		true_self := self;
 		
-		return self
+		return self;
 	);
 	
 	public trainEnter: (Train`Orientation) ==> ()
@@ -92,9 +92,6 @@ operations
 		else
 			return downSemaphore.getColor() <> <Red> and downSemaphore.isAvailable();
 	
-	pure public canEnterNextBlock: (Train`Orientation) ==> (bool)
-	canEnterNextBlock(orientation) == return getNextBlock(orientation).canEnter(orientation);
-	
 	pure public isInStation: () ==> (bool)
 	isInStation() == return module.getIsStation();
 	
@@ -103,8 +100,7 @@ operations
 	getSemaphore(orientationArg) == 
 		if orientationArg = <Up>
 		then
-			return upSemaphore
-		else
+			return upSemaphore else
 			return downSemaphore;
 	
 	--pure public getSensor: (Train`Orientation) ==> (Sensor)
