@@ -181,8 +181,4 @@ operations
 		return modules;
 	);
 
-functions
-
-traces
-
 end TrainLine
