@@ -1,7 +1,4 @@
 class SimpleModule is subclass of Module
-types
-
-values
 
 instance variables
 	private block: Block;
@@ -23,9 +20,5 @@ operations
 	
 	public pure getIsStation: () ==> bool
 	getIsStation() == return false;
-
-functions
-
-traces
 
 end SimpleModule
