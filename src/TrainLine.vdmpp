@@ -16,7 +16,10 @@ instance variables
 	inv isLineBuilt = true => (headModuleId <> nil and tailModuleId <> nil);
 	
 	-- There arent any trains in the same block
-	inv not exists t1, t2 in set dom trains & (t1 <> t2 and trains(t1).getCurrentBlock() = trains(t2).getCurrentBlock());
+	inv isLineBuilt => not exists t1, t2 in set dom trains & (t1 <> t2 and trains(t1).getCurrentBlock() = trains(t2).getCurrentBlock());
+	
+	-- There must be a minimum of 2 stations
+	inv isLineBuilt => exists s1, s2 in set dom modules & (s1 <> s2 and modules(s1).getIsStation() and modules(s2).getIsStation());
 	
 	-- There must be at least 1 module between stations and at least 2 stations
 	inv isLineBuilt => forall m in set dom modules &
@@ -97,17 +100,25 @@ operations
 	-- Moves a train with a specific id
 	public moveTrain: (String) ==> ()
 	moveTrain(id) == trains(id).move()
-	pre isLineBuilt = true;
+	pre isLineBuilt = true and id in set dom trains;
 	
 	-- Stop train in a simple block
 	public stopTrain: (String) ==> ()
 	stopTrain(id) == trains(id).stopAction()
-	pre isLineBuilt = true;
+	pre isLineBuilt = true and id in set dom trains;
 	
 	-- Requests a specific train to leave a station
 	public requestLeaveStation: (String) ==> bool
 	requestLeaveStation(id) == trains(id).requestLeaveStation()
-	pre isLineBuilt = true;
+	pre isLineBuilt = true and id in set dom trains;
+	
+	public changeSemaphoreAvailability: String * Train`Orientation * bool ==> ()
+	changeSemaphoreAvailability(moduleId, orientation, isAvailable) == modules(moduleId).getBlock(orientation).getSemaphore(orientation).setAvailability(isAvailable)
+	pre moduleId in set dom modules;
+	
+	public changeSensorAvailability: String * Train`Orientation * bool ==> ()
+	changeSensorAvailability(moduleId, orientation, isAvailable) == modules(moduleId).getBlock(orientation).getSemaphore(orientation).setSensorAvailability(isAvailable)
+	pre moduleId in set dom modules;
 	
 	-- *****************************************************************
 	-- ****************** Private Auxiliar Methods *********************
@@ -156,18 +167,6 @@ operations
 	getBlockSemaphore(idArg, orientationArg) ==
 	(
 		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg).getColor();
-	);
-	
-	-- Gets
-	pure public getModules: () ==> (map String to Module)
-	getModules() == 
-	(
-		return modules;
-	);
-	pure public getTrains: () ==> (map String to Train)
-	getTrains() == 
-	(
-		return trains;
 	);
 
 functions

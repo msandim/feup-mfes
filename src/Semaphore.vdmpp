@@ -9,9 +9,9 @@ instance variables
 	private semaphoreAvailable: bool := true;
 	private sensorAvailable: bool := true;
 	
+	inv sensorStatus = <Busy> => semaphoreStatus = <Red>;
+	
 operations
-	--public pure isColor: (Color) ==> bool
-	--isColor(color) == return semaphoreStatus = color and semaphoreAvailable;
 	
 	public pure getColor: () ==> Color
 	getColor() == return semaphoreStatus;
@@ -22,16 +22,27 @@ operations
 	public pure getSensor: () ==> SensorStatus
 	getSensor() == return sensorStatus;
 	
-	--public pure isSensor: (SensorStatus) ==> bool
-	--isSensor(sensor) == return sensorStatus = sensor and sensorAvailable;
-	
 	public pure isSensorAvailable: () ==> bool
 	isSensorAvailable() == return sensorAvailable;
+	
+	public setAvailability: bool ==> ()
+	setAvailability(availability) == semaphoreAvailable := availability;
+	
+	public setSensorAvailability: bool ==> ()
+	setSensorAvailability(availability) == sensorAvailable := availability;
 	
 	public setColor: (Color) ==> ()
 	setColor(color) == semaphoreStatus := color;
 	
 	public setSensor: (SensorStatus) ==> ()
 	setSensor(status) == sensorStatus := status;
+	
+	public setColorAndSensor: Color * SensorStatus ==> ()
+	setColorAndSensor(color, sensor) ==
+	atomic
+	(
+		semaphoreStatus := color;
+		sensorStatus := sensor;
+	);
 	
 end Semaphore
