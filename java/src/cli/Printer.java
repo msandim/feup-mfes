@@ -16,6 +16,34 @@ public class Printer
 		mApplication = application;
 	}
 
+	public void printChangeSemaphoreAvailability(String moduleId, Object orientation, boolean value)
+	{
+		print("Semaphore at Module ");
+		print(moduleId);
+		print(" with Orientation ");
+		print(orientation.toString());
+		print(" is now ");
+
+		if(!value)
+			print("not ");
+
+		print("available");
+	}
+
+	public void printChangeSensorAvailability(String moduleId, Object orientation, boolean value)
+	{
+		print("Sensor at Module ");
+		print(moduleId);
+		print(" with Orientation ");
+		print(orientation.toString());
+		print(" is now ");
+
+		if(!value)
+			print("not ");
+
+		print("available");
+	}
+
 	public void printMoveTrainMessage(Train train)
 	{
 		print("Moving Train ");
@@ -50,10 +78,17 @@ public class Printer
 		print("\n");
 	}
 
-	public void printBlock(String moduleId, Object orientation)
+	public void printBlock(String moduleId, Object orientation, boolean next)
 	{
 		Block block = mApplication.getBlock(moduleId, orientation);
+		if(block == null)
+		{
+			println("Block doesn't exist!");
+			return;
+		}
 
+		if(next)
+			print("Next ");
 		print("Block:\n");
 
 		print("\tModuleId: ");
@@ -64,7 +99,7 @@ public class Printer
 		print(orientation.toString());
 		print("\n");
 
-		printSemaphore(block.getSemaphore(orientation));
+		printSemaphore(block.getSemaphore(orientation), next);
 	}
 	public void printTrain(Train train)
 	{
@@ -96,8 +131,10 @@ public class Printer
 		printTrain(train);
 	}
 
-	public void printSemaphore(Semaphore semaphore)
+	public void printSemaphore(Semaphore semaphore, boolean next)
 	{
+		if(next)
+			print("Next ");
 		print("Semaphore:\n");
 
 		print("\tColor: ");
@@ -116,7 +153,7 @@ public class Printer
 		print(semaphore.isSensorAvailable().toString());
 		print("\n");
 	}
-	public void printSemaphore(String moduleId, Object orientation)
+	public void printSemaphore(String moduleId, Object orientation, boolean next)
 	{
 		// Get semaphore:
 		Semaphore semaphore = mApplication.getSemaphore(moduleId, orientation);
@@ -127,7 +164,7 @@ public class Printer
 		}
 
 		// Print info:
-		printSemaphore(semaphore);
+		printSemaphore(semaphore, next);
 	}
 
 	public static void printList(List<String> list)

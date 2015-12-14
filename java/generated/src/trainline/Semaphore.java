@@ -31,12 +31,23 @@ public class Semaphore {
         return sensorAvailable;
     }
 
+    public void setAvailability(final Boolean availability) {
+        semaphoreAvailable = availability;
+    }
+
+    public void setSensorAvailability(final Boolean availability) {
+        sensorAvailable = availability;
+    }
+
     public void setColor(final Object color) {
         semaphoreStatus = color;
     }
 
-    public void setSensor(final Object status) {
-        sensorStatus = status;
+    public void setColorAndSensor(final Object color, final Object sensor) {
+        Object atomicTmp_1 = color;
+        Object atomicTmp_2 = sensor;
+        semaphoreStatus = atomicTmp_1;
+        sensorStatus = atomicTmp_2;
     }
 
     public String toString() {

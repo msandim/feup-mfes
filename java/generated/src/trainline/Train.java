@@ -32,8 +32,8 @@ public class Train {
     public void move() {
         status = trainline.quotes.MovingQuote.getInstance();
         currentBlock.trainExit(orientation);
-        currentBlock.getNextBlock(((Object) orientation)).trainEnter(orientation);
-        currentBlock = currentBlock.getNextBlock(((Object) orientation));
+        getNextBlock().trainEnter(orientation);
+        currentBlock = getNextBlock();
     }
 
     public void stopAction() {
@@ -42,17 +42,16 @@ public class Train {
 
     public Boolean requestLeaveStation() {
         if (isPathClearedUntilNextStation()) {
-            if (Utils.equals(currentBlock.getNextBlock(((Object) orientation))
-                                             .getNextBlock(((Object) orientation))
-                                             .getSemaphore(((Object) orientation))
-                                             .getColor(),
+            if (Utils.equals(getNextBlock().getNextBlock(((Object) orientation))
+                                     .getSemaphore(((Object) orientation))
+                                     .getColor(),
                         trainline.quotes.RedQuote.getInstance())) {
-                currentBlock.getNextBlock(((Object) orientation))
-                            .setSemaphore(trainline.quotes.YellowQuote.getInstance(),
+                getNextBlock()
+                    .setSemaphore(trainline.quotes.YellowQuote.getInstance(),
                     orientation);
             } else {
-                currentBlock.getNextBlock(((Object) orientation))
-                            .setSemaphore(trainline.quotes.GreenQuote.getInstance(),
+                getNextBlock()
+                    .setSemaphore(trainline.quotes.GreenQuote.getInstance(),
                     orientation);
             }
 
@@ -87,7 +86,7 @@ public class Train {
     }
 
     private Boolean isPathClearedUntilNextStation() {
-        Block nextBlock = currentBlock.getNextBlock(((Object) orientation));
+        Block nextBlock = getNextBlock();
         Boolean whileCond_1 = true;
 
         while (whileCond_1) {
