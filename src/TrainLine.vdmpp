@@ -168,6 +168,18 @@ operations
 	(
 		getModule(idArg).getBlock(orientationArg).getSemaphore(orientationArg).getColor();
 	);
+	
+	pure public getTrains: () ==> (map String to Train)
+	getTrains() == 
+	(
+		return trains;
+	);
+	
+	pure public getModules: () ==> (map String to Module)
+	getModules() == 
+	(
+		return modules;
+	);
 
 functions
 
