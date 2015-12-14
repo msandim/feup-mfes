@@ -12,6 +12,9 @@ operations
 		
 		assertEqual(line.getModule("station1"), line.getModule("module1").getUpModule());
 		assertEqual(line.getModule("module1"), line.getModule("station1").getDownModule());
+		assertEqual(line.getModule("station1"), line.getModule("module1").getNextModule(<Up>));
+		assertEqual(line.getModule("module1"), line.getModule("station1").getNextModule(<Down>));
+		assertEqual("module1", line.getModule("module1").getId());
 		
 		assertEqual(line.getModule("module2"), line.getModule("station1").getUpModule());
 		assertEqual(line.getModule("station1"), line.getModule("module2").getDownModule());

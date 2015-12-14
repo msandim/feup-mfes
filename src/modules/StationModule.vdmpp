@@ -15,17 +15,14 @@ operations
 		id := idArg;
 		upBlock := new Block(self, trainLineArg);
 		downBlock := new Block(self, trainLineArg);
-		return self
+		return self;
 	);
 	
 	public pure canEnter: (Train`Orientation) ==> (bool)
 	canEnter(orientation) ==
 	(
 		if orientation = <Up>
-		then
-			return upBlock.canEnter(orientation)
-		else
-			return downBlock.canEnter(orientation)
+		then return upBlock.canEnter(orientation) else return downBlock.canEnter(orientation);
 	);
 	
 	public pure getBlock: (Train`Orientation) ==> (Block)
@@ -33,9 +30,7 @@ operations
 	(	
 		if orientation = <Up>
 		then
-			return upBlock
-		else
-			return downBlock;
+			return upBlock else return downBlock;
 	);
 	
 	public pure getIsStation: () ==> bool

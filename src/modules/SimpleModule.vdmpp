@@ -12,7 +12,7 @@ operations
 	(
 		id := idArg;
 		block := new Block(self, trainLineArg);
-		return self
+		return self;
 	);
 	
 	public pure canEnter: (Train`Orientation) ==> (bool)

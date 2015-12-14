@@ -34,8 +34,8 @@ operations
 	public setColor: (Color) ==> ()
 	setColor(color) == semaphoreStatus := color;
 	
-	public setSensor: (SensorStatus) ==> ()
-	setSensor(status) == sensorStatus := status;
+	--public setSensor: (SensorStatus) ==> ()
+	--setSensor(status) == sensorStatus := status;
 	
 	public setColorAndSensor: Color * SensorStatus ==> ()
 	setColorAndSensor(color, sensor) ==

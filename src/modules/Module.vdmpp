@@ -55,16 +55,14 @@ operations
 	getNextModule(orientation) ==
 	(
 		if orientation = <Up>
-		then return upModule
-		else return downModule;
+		then return upModule else return downModule;
 	);
 	
 	pure public getPreviousModule: (Train`Orientation) ==> (Module)
 	getPreviousModule(orientation) ==
 	(
 		if orientation = <Down>
-		then return upModule
-		else return downModule;
+		then return upModule else return downModule;
 	);
 	
 	public setUpModule: (Module) ==> ()

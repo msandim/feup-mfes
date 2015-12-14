@@ -34,26 +34,26 @@ operations
 		currentBlock.trainExit(orientation);
 	
 		-- Make enter operations on the block we're going on:
-		currentBlock.getNextBlock(orientation).trainEnter(orientation);
+		getNextBlock().trainEnter(orientation);
 			
 		-- Move to the next block:	
-		currentBlock := currentBlock.getNextBlock(orientation);
+		currentBlock := getNextBlock();
 	)
-	pre currentBlock.getNextBlock(orientation).canEnter(orientation)
+	pre getNextBlock().canEnter(orientation)
 	post currentBlock = currentBlock~.getNextBlock(orientation) and -- New block is equal to old block's next block
 		not currentBlock.canEnter(orientation) and -- We cannot enter in the new block (New block is red)
-	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then -- Check if sempahore from the block we're exiting is ok
-	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Red>
+	  (if getPreviousBlock().getPreviousBlock(orientation).isInStation() then -- Check if sempahore from the block we're exiting is ok
+	  		getPreviousBlock().getSemaphore(orientation).getColor() = <Red>
 	  	else
-	  		currentBlock.getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
+	  		getPreviousBlock().getSemaphore(orientation).getColor() = <Yellow>
 	  ) and
-	  (if currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() 
-	  			or currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getSensor() = <Busy> then -- We should put red if its a block next to a station, or a train is there
-	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Red>
-	  	elseif currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() then
-	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
+	  (if getPreviousBlock().getPreviousBlock(orientation).getPreviousBlock(orientation).isInStation() 
+	  			or getPreviousBlock().getPreviousBlock(orientation).getSemaphore(orientation).getSensor() = <Busy> then -- We should put red if its a block next to a station, or a train is there
+	  		getPreviousBlock().getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Red>
+	  	elseif getPreviousBlock().getPreviousBlock(orientation).isInStation() then
+	  		getPreviousBlock().getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
 	  	else
-	  		currentBlock.getPreviousBlock(orientation).getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Green>
+	  		getPreviousBlock().getPreviousBlock(orientation).getSemaphore(orientation).getColor() = <Green>
 	  );
 	  
 	public stopAction: () ==> ()
@@ -68,23 +68,23 @@ operations
 		if isPathClearedUntilNextStation()
 		then
 		(	
-			if (currentBlock.getNextBlock(orientation).getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>) then
-				currentBlock.getNextBlock(orientation).setSemaphore(<Yellow>, orientation)
+			if (getNextBlock().getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>) then
+				getNextBlock().setSemaphore(<Yellow>, orientation)
 			else
-				currentBlock.getNextBlock(orientation).setSemaphore(<Green>, orientation);
+				getNextBlock().setSemaphore(<Green>, orientation);
 				
 			return true;
 		)
 		else
 			return false;
 	)
-	pre status = <Stopped> and currentBlock.isInStation() and currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>
+	pre status = <Stopped> and currentBlock.isInStation() and getNextBlock().getSemaphore(orientation).getColor() = <Red>
 	post if isPathClearedUntilNextStation() then
-					(if currentBlock.getNextBlock(orientation).getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red> then
-							currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Yellow>
+					(if getNextBlock().getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red> then
+							getNextBlock().getSemaphore(orientation).getColor() = <Yellow>
 					else
-							currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Green>)
-		else currentBlock.getNextBlock(orientation).getSemaphore(orientation).getColor() = <Red>;
+							getNextBlock().getSemaphore(orientation).getColor() = <Green>)
+		else getNextBlock().getSemaphore(orientation).getColor() = <Red>;
 	
 	-- Gets
 	pure public getCurrentBlock: () ==> Block
@@ -109,7 +109,7 @@ operations
 	private pure isPathClearedUntilNextStation: () ==> bool
 	isPathClearedUntilNextStation() ==
 	(
-		dcl nextBlock: Block := currentBlock.getNextBlock(orientation);
+		dcl nextBlock: Block := getNextBlock();
 		
 		-- Iterate the next blocks and check if we can make it to the next station without being stuck somewhere in between:
 		while (not nextBlock.getModule().getIsStation())
